@@ -18,8 +18,9 @@ library ieee;
 --This entity is a linear feedback shift register
 --Using this module requires that the feedout be fed-back into feedin at some point.  The feedback
 --would normally be done internally, except some designs require modifying the feedback before
---returning it to the shift register.  To support such robust designs the feedback is expected to be
---performed at a higher level, even when simple feedback is all that is required (i.e. feedin<=feedout;)
+--returning it to the shift register.  To support such robust designs the feedback is always
+--expected to be performed at a higher level, even when simple feedback is all that is required
+--(i.e. feedin<=feedout;)
 entity lfsr is
    port( --Process clock, every rising edge the LFSR updates the feedback with a new value
          clk         : in  std_logic;
@@ -39,7 +40,7 @@ end lfsr;
 
 architecture behave of lfsr is
    signal poly_mask_reg : std_logic_vector(poly_mask'range);
-   --All of these internal signals need to be defined in the same 0-to-'length range order to make optimal use of the 'range attribute
+   --All of these internal signals need to be defined in the same 0-to-'length range-order to make optimal use of the 'range attribute
    signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1));
       alias data_in     : std_logic_vector(0 to (feedin'length-1)) is shift_reg(0 to (feedin'length-1));
       alias polynomial  : std_logic_vector(0 to (poly_mask'length-1)) is shift_reg(feedin'length to (feedin'length + poly_mask'length-1));
@@ -57,35 +58,29 @@ begin
          --typical vector assigments preserve the left-to-right bit order,
          --we need to preserve the 0 to n order for this assignment
          for n in seed'low to seed'high loop
-            polynomial(n-seed'low) <= seed(n); --seed may not always be defined 0-to-n, but at least we know polynomial is 0-to-n.
+            --seed may not always be defined 0-to-n, but at least we know polynomial is 0-to-n.
+            polynomial(n-seed'low) <= seed(n);
          end loop;
       else
          if(rising_edge(clk)) then
-            --shift_reg is a concatonation of data_in and polynomial,
-            --by assigning the left-most bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
+            --shift_reg is a concatonation of data_in and polynomial. By assigning the left-most
+            --bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
             polynomial <= shift_reg(polynomial'range);
          end if;
       end if;
    end process;
 
-   --The shift register updates every clock cycle, when it does, this process calculates the feedback result
-   --The result is the modulus-2 summation of specified polynomial taps.
-   --Modulus-2 addition is simply an xor operation.
-   process(polynomial)
-      variable tmp : std_logic_vector(0 to (result'length + polynomial'length-1));
-   begin
-      tmp := (others => '0');
-      tmp(result'length to (result'length + polynomial'length-1)) := polynomial;--way to say polynomial'(range + scalar)?
-      for outbit in result'reverse_range loop --It is critical that the result is calcuated from right to left.  This ensures the feedback history is preserved
-         for tap in poly_mask_reg'range loop
-            if(poly_mask_reg(tap) = '1') then
-               tmp(outbit) := tmp(outbit) xor tmp(tap-poly_mask_reg'low+outbit+1); --subtracting poly_mask_reg'low is to handle situations where the poly_mask_reg'range is not 0-based (e.g. 1 to 15)
-            end if;
-         end loop;
-      end loop;
-      --left-most bits of the temporary variable contains the result.
-      result <= tmp(result'range);
-   end process;
+   --The shift register updates every clock cycle, when it does, this generate loop calculates the
+   --feedback result.  The result is the modulus-2 summation of specified polynomial taps.
+   --Modulus-2 addition is simply an xor operation.  It is critical that the result is calcuated
+   --from right to left.  This ensures the feedback history is preserved.
+   for outbit in result'reverse_range generate
+      for tap in poly_mask_reg'range generate
+         --subtracting poly_mask_reg'low is to handle situations where the poly_mask_reg'range is
+         --not 0-based (e.g. 1 to 15)
+         result(outbit) := result(outbit) xor shift_reg(tap-poly_mask_reg'low+outbit+1);
+      end generate;
+   end generate
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
    feedout(feedout'range) <= result(result'range);
