@@ -10,10 +10,32 @@ package lfsr_pkg is
             feedin      : in  std_logic_vector;
             feedout     : out std_logic_vector);
    end component;
+
+   function xor_Reduce(bits: std_logic_vector) return std_logic;
 end package;
 
 library ieee;
    use ieee.std_logic_1164.all;
+
+package body lfsr_pkg is
+   function xor_Reduce(bits: std_logic_vector) return std_logic is
+   begin
+      if(bits'low = bits'high) then
+         return bits(bits'low);
+      else
+         if(bits'ascending) then
+            return bits(bits'low) xor xor_Reduce(bits(bits'low+1 to bits'high));
+         else
+            return bits(bits'low) xor xor_Reduce(bits(bits'high downto bits'low+1));
+         end if;
+      end if;
+   end function;
+
+end package body;
+
+library ieee;
+   use ieee.std_logic_1164.all;
+   use work.lfsr_pkg.all;
 
 --This entity is a linear feedback shift register
 --Using this module requires that the feedout be fed-back into feedin at some point.  The feedback
@@ -82,16 +104,23 @@ begin
    --Modulus-2 addition is simply an xor operation.  It is critical that the result is calcuated
    --from right to left.  This ensures the feedback history is preserved.
    gen_output: for outbit in result'reverse_range generate
+      signal polynomial_window   : std_logic_vector(polynomial'range);
+      signal final_polynomial    : std_logic_vector(polynomial'range);
+   begin
+      --Lines up the polynomial with the current outbit
+      polynomial_window <= shift_reg(outbit + polynomial'low + 1 to outbit + polynomial'high + 1);
+
+      --This loop will handle situations when the poly_mask is not a 0-based ascending ranged vector
       loop_taps: for tap in poly_mask_reg'range generate
-         --subtracting poly_mask_reg'low is to handle situations where the poly_mask_reg'range is
-         --not 0-based (e.g. 1 to 15)
-         check_poly_mask: if(poly_mask_reg(tap) = '1') generate
-            result(outbit) <= result(outbit) xor shift_reg(tap-poly_mask_reg'low+outbit+1);
-         end generate;
+         final_polynomial(tap-poly_mask'low)  <= poly_mask_reg(tap-poly_mask'low) and polynomial_window(tap-poly_mask'low);
       end generate;
+
+      --Finally we need to find the modulus-2 summation of the final polynomial for this outbit
+      result(outbit)    <= xor_Reduce(final_polynomial);
+
    end generate;
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
-   feedout(feedout'range) <= (others => '0') when rst = '1' else result(result'range);
+   feedout <= result;
 
 end behave;
