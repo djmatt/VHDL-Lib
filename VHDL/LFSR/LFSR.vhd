@@ -1,3 +1,12 @@
+----------------------------------------------------------------------------------------------------
+--        Linear Feedback Shift Regsiter
+----------------------------------------------------------------------------------------------------
+-- Matthew Dallmeyer - d01matt@gmail.com
+-- Copyright 2013
+
+----------------------------------------------------------------------------------------------------
+--        PACKAGE
+----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
 
@@ -14,10 +23,16 @@ package lfsr_pkg is
    function xor_Reduce(bits: std_logic_vector) return std_logic;
 end package;
 
+----------------------------------------------------------------------------------------------------
+--        PACKAGE BODY
+----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
 
 package body lfsr_pkg is
+   -- XOR's all the bits in a vector.  Useful for checking the parity of a vector.
+   -- bits:    Logic vector
+   -- returns: result of all the bits XOR'd together
    function xor_Reduce(bits: std_logic_vector) return std_logic is
    begin
       if(bits'low = bits'high) then
@@ -30,14 +45,16 @@ package body lfsr_pkg is
          end if;
       end if;
    end function;
-
 end package body;
 
+----------------------------------------------------------------------------------------------------
+--        ENTITY
+----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use work.lfsr_pkg.all;
 
---This entity is a linear feedback shift register
+--Linear feedback shift register
 --Using this module requires that the feedout be fed-back into feedin at some point.  The feedback
 --would normally be done internally, except some designs require modifying the feedback before
 --returning it to the shift register.  To support such robust designs the feedback is always
@@ -51,7 +68,7 @@ entity lfsr is
          rst         : in  std_logic;
          --Place '1's in the bits where the polynomial calls for taps.  Read up on LFSR's before
          --selecting a polynomial, not all choices will yield "good" random numbers.
-         --(e.g. X^5 + X^3 + 1 => poly_mask(4 downto 0) <= "10100";)
+         --(e.g. X^5 + X^3 + 1 would be poly_mask(4 downto 0) <= "10100";)
          poly_mask   : in  std_logic_vector;
          --Must be identical in length to poly_mask. Initial value of the shift register.  Is only
          --set during rst = '1'.  DO NOT SET TO ALL '0's
@@ -64,6 +81,9 @@ entity lfsr is
          feedout     : out std_logic_vector);
 end lfsr;
 
+----------------------------------------------------------------------------------------------------
+--        ARCHITECTURE
+----------------------------------------------------------------------------------------------------
 architecture behave of lfsr is
    signal poly_mask_reg : std_logic_vector(poly_mask'range);
    --All of these internal signals need to be defined in the same 0-to-'length range-order to make
@@ -81,7 +101,7 @@ begin
    data_in <= feedin;
 
    --Process to shift the feedback through a shift-register
-   process(clk, rst)
+   shifter: process(clk, rst)
    begin
       if(rst = '1') then
          --Typical vector assigments preserve the left-to-right bit order.  We need to preserve the
@@ -103,7 +123,7 @@ begin
    --feedback result.  The result is the modulus-2 summation of specified polynomial taps.
    --Modulus-2 addition is simply an xor operation.  It is critical that the result is calcuated
    --from right to left.  This ensures the feedback history is preserved.
-   gen_output: for outbit in result'reverse_range generate
+   calc_feedback: for outbit in result'reverse_range generate
       signal polynomial_window   : std_logic_vector(polynomial'range);
       signal final_polynomial    : std_logic_vector(polynomial'range);
    begin
@@ -117,10 +137,8 @@ begin
 
       --Finally we need to find the modulus-2 summation of the final polynomial for this outbit
       result(outbit)    <= xor_Reduce(final_polynomial);
-
    end generate;
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
    feedout <= result;
-
 end behave;

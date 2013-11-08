@@ -1,3 +1,12 @@
+----------------------------------------------------------------------------------------------------
+--        LFSR Testbench Top Levl
+----------------------------------------------------------------------------------------------------
+-- Matthew Dallmeyer - d01matt@gmail.com
+-- Copyright 2013
+
+----------------------------------------------------------------------------------------------------
+--        ENTITY
+----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
 
@@ -9,10 +18,13 @@ library work;
 entity tb_lfsr is
 end tb_lfsr;
 
+----------------------------------------------------------------------------------------------------
+--        ARCHITECTURE
+----------------------------------------------------------------------------------------------------
 architecture sim of tb_lfsr is
-   signal rst : std_logic := '0';
-   signal clk : std_logic := '0';
-   signal feedback : std_logic_vector(3 downto 0);
+   signal rst        : std_logic := '0';
+   signal clk        : std_logic := '0';
+   signal feedback   : std_logic_vector(3 downto 0);
 
    signal polynomial : std_logic_vector(6 downto 0) := "0000000";
    signal seed       : std_logic_vector(6 downto 0) := "0000000";
@@ -25,7 +37,7 @@ begin
       port map(   clk         => clk);
 
    --Instantiate UUT
-   lfsr1 : lfsr
+   uut : lfsr
       port map(   clk         => clk,
                   rst         => rst,
                   poly_mask   => polynomial,
@@ -41,8 +53,6 @@ begin
       rst <= '1';
       wait for 50ns;
       rst <= '0';
-
-
       wait;
    end process;
 end sim;
