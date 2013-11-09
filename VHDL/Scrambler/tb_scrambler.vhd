@@ -1,3 +1,12 @@
+----------------------------------------------------------------------------------------------------
+--        Scrambler/Descramber Testbench
+----------------------------------------------------------------------------------------------------
+-- Matthew Dallmeyer - d01matt@gmail.com
+-- Copyright 2013
+
+----------------------------------------------------------------------------------------------------
+--        ENTITY
+----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -11,6 +20,9 @@ library work;
 entity tb_lfsr is
 end tb_lfsr;
 
+----------------------------------------------------------------------------------------------------
+--        ARCHITECTURE
+----------------------------------------------------------------------------------------------------
 architecture sim of tb_lfsr is
    signal rst : std_logic;
    signal clk : std_logic;
@@ -30,7 +42,7 @@ begin
       port map(   clk         => clk);
 
    --count_process
-   c: process(clk, rst)
+   counter: process(clk, rst)
       variable counter : unsigned (15 downto 0) := (others => '0');
    begin
       if(rst = '1') then
