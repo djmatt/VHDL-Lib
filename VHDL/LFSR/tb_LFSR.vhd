@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        LFSR Testbench Top Levl
+--        LFSR Testbench Top Level
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 -- Copyright 2013
@@ -36,7 +36,7 @@ begin
                   DUTY_CYCLE  => 0.50)
       port map(   clk         => clk);
 
-   --Instantiate UUT
+   --Instantiate unit under test
    uut : lfsr
       port map(   clk         => clk,
                   rst         => rst,
