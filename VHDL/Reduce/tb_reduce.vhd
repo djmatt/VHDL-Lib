@@ -25,10 +25,14 @@ end tb_reduce;
 architecture sim of tb_reduce is
    signal rst        : std_logic;
    signal clk        : std_logic;
-   signal count_data : std_logic_vector(6 downto 0);
+   signal count_data : std_logic_vector(2 downto 0);
    signal result_and : std_logic;
    signal result_or  : std_logic;
    signal result_xor : std_logic;
+   signal result_nand : std_logic;
+   signal result_nor  : std_logic;
+   signal result_nxor : std_logic;
+
 begin
 
    --Instantiate clock generator
@@ -52,19 +56,25 @@ begin
    end process;
 
    --UUT
-   reduce_and : reduce
-      generic map(gate  => "and")
+   reduce_and_test : reduce_and
       port map(data     => count_data,
                result   => result_and);
-   reduce_or  : reduce
-      generic map(gate  => "or")
+   reduce_or_test  : reduce_or
       port map(data     => count_data,
                result   => result_or);
-   reduce_xor : reduce
-      generic map(gate  => "xor")
+   reduce_xor_test : reduce_xor
       port map(data     => count_data,
                result   => result_xor);
-   
+   reduce_nand_test : reduce_nand
+      port map(data     => count_data,
+               result   => result_nand);
+   reduce_nor_test  : reduce_nor
+      port map(data     => count_data,
+               result   => result_nor);
+   reduce_nxor_test : reduce_nxor
+      port map(data     => count_data,
+               result   => result_nxor);
+                  
    --Main Process
    main: process
    begin
