@@ -2,7 +2,6 @@
 --        LFSR Testbench Top Level
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
--- Copyright 2013
 
 ----------------------------------------------------------------------------------------------------
 --        ENTITY
@@ -37,7 +36,7 @@ begin
       port map(   clk         => clk);
 
    --Instantiate unit under test
-   uut : lfsr
+   uut : entity work.lfsr(structural)
       port map(   clk         => clk,
                   rst         => rst,
                   poly_mask   => polynomial,

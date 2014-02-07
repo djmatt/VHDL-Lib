@@ -2,7 +2,6 @@
 --        Data Descrambler
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
--- Copyright 2013
 
 ----------------------------------------------------------------------------------------------------
 --        PACKAGE
@@ -60,7 +59,7 @@ architecture behave of descrambler is
    signal feedback_from_lfsr     : std_logic_vector(scrambled_datain'range);
 begin
    --Use this lfsr to generate random patterns to descramble the data with
-   descrambling_lfsr : lfsr
+   descrambling_lfsr : entity work.lfsr(structural)
       port map(   clk         => clk,
                   rst         => rst,
                   poly_mask   => poly_mask,

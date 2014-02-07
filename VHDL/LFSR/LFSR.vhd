@@ -2,7 +2,6 @@
 --        Linear Feedback Shift Regsiter
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
--- Copyright 2013
 
 ----------------------------------------------------------------------------------------------------
 --        PACKAGE
@@ -85,9 +84,9 @@ entity lfsr is
 end lfsr;
 
 ----------------------------------------------------------------------------------------------------
---        ARCHITECTURE
+--        ARCHITECTURE (structural)
 ----------------------------------------------------------------------------------------------------
-architecture behave of lfsr is
+architecture structural of lfsr is
    signal poly_mask_reg : std_logic_vector(poly_mask'range);
    --All of these internal signals need to be defined in the same 0-to-'length range-order to make
    --optimal use of the 'range attribute
@@ -140,7 +139,6 @@ begin
       end generate;
 
       --Finally we need to find the modulus-2 summation of the final polynomial for this outbit
-      --result(outbit)    <= xor_Reduce(final_polynomial);
       reducer: reduce_xor
       port map(data     => final_polynomial,
                result   => iResult);
@@ -150,4 +148,62 @@ begin
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
    feedout <= result;
+end structural;
+
+----------------------------------------------------------------------------------------------------
+--        ARCHITECTURE (behavioral)
+----------------------------------------------------------------------------------------------------
+architecture behave of lfsr is
+   signal poly_mask_reg : std_logic_vector(poly_mask'range);
+   --All of these internal signals need to be defined in the same 0-to-'length range order to make optimal use of the 'range attribute
+   signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1));
+      alias data_in     : std_logic_vector(0 to (feedin'length-1)) is shift_reg(0 to (feedin'length-1));
+      alias polynomial  : std_logic_vector(0 to (poly_mask'length-1)) is shift_reg(feedin'length to (feedin'length + poly_mask'length-1));
+   signal result        : std_logic_vector(0 to (feedout'length-1));
+begin
+
+   --Set the polynomial mask when only while reset is asserted.
+   poly_mask_reg <= poly_mask when rst = '1' else poly_mask_reg;
+
+   --Process to shift the feedback through a shift-register
+   data_in <= feedin; --load the left-most bits of shift_reg with the feedin
+   process(clk, rst)
+   begin
+      if(rst = '1') then
+         --typical vector assigments preserve the left-to-right bit order,
+         --we need to preserve the 0 to n order for this assignment
+         for n in seed'low to seed'high loop
+            polynomial(n-seed'low) <= seed(n); --seed may not always be defined 0-to-n, but at least we know polynomial is 0-to-n.
+         end loop;
+      else
+         if(rising_edge(clk)) then
+            --shift_reg is a concatonation of data_in and polynomial,
+            --by assigning the left-most bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
+            polynomial <= shift_reg(polynomial'range);
+         end if;
+      end if;
+   end process;
+
+   --The shift register updates every clock cycle, when it does, this process calculates the feedback result
+   --The result is the modulus-2 summation of specified polynomial taps.
+   --Modulus-2 addition is simply an xor operation.
+   process(polynomial)
+      variable tmp : std_logic_vector(0 to (result'length + polynomial'length-1));
+   begin
+      tmp := (others => '0');
+      tmp(result'length to (result'length + polynomial'length-1)) := polynomial;--way to say polynomial'(range + scalar)?
+      for outbit in result'reverse_range loop --It is critical that the result is calcuated from right to left.  This ensures the feedback history is preserved
+         for tap in poly_mask_reg'range loop
+            if(poly_mask_reg(tap) = '1') then
+               tmp(outbit) := tmp(outbit) xor tmp(tap-poly_mask_reg'low+outbit+1); --subtracting poly_mask_reg'low is to handle situations where the poly_mask_reg'range is not 0-based (e.g. 1 to 15)
+            end if;
+         end loop;
+      end loop;
+      --left-most bits of the temporary variable contains the result.
+      result <= tmp(result'range);
+   end process;
+
+   --Before feeding the result back to the shift register, pass it to the higher level first.
+   feedout(feedout'range) <= result(result'range);
+
 end behave;

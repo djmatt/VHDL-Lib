@@ -2,7 +2,6 @@
 --        Data Scrambler
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
--- Copyright 2013
 
 ----------------------------------------------------------------------------------------------------
 --        PACKAGE
@@ -60,7 +59,7 @@ architecture behave of scrambler is
    signal feedback_from_lfsr     : std_logic_vector(unscrambled_datain'range);
 begin
    --Use this lfsr to generate random patterns to scramble the data with
-   scrambling_lfsr : lfsr
+   scrambling_lfsr : entity work.lfsr(structural)
       port map(   clk         => clk,
                   rst         => rst,
                   poly_mask   => poly_mask,
