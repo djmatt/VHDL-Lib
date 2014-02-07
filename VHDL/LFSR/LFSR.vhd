@@ -52,7 +52,10 @@ end package body;
 ----------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
+   
+library work;
    use work.lfsr_pkg.all;
+   use work.reduce_pkg.all;
 
 --Linear feedback shift register
 --Using this module requires that the feedout be fed-back into feedin at some point.  The feedback
@@ -126,6 +129,7 @@ begin
    calc_feedback: for outbit in result'reverse_range generate
       signal polynomial_window   : std_logic_vector(polynomial'range);
       signal final_polynomial    : std_logic_vector(polynomial'range);
+      signal iResult             : std_logic;
    begin
       --Lines up the polynomial with the current outbit
       polynomial_window <= shift_reg(outbit + polynomial'low + 1 to outbit + polynomial'high + 1);
@@ -136,7 +140,12 @@ begin
       end generate;
 
       --Finally we need to find the modulus-2 summation of the final polynomial for this outbit
-      result(outbit)    <= xor_Reduce(final_polynomial);
+      --result(outbit)    <= xor_Reduce(final_polynomial);
+      reducer: reduce_xor
+      port map(data     => final_polynomial,
+               result   => iResult);
+      result(outbit) <= iResult;
+      
    end generate;
 
    --Before feeding the result back to the shift register, pass it to the higher level first.

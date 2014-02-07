@@ -243,7 +243,7 @@ begin
 end implement;
 ----------------------------------------------------------------------------------------------------
 architecture implement of reduce_nand is
-   signal inverter   : std_logic;
+   signal inverted   : std_logic;
 
    component reduce is
       generic( gate  :     string);
@@ -254,13 +254,13 @@ begin
    reduce_imp  : reduce
       generic map(gate  => "or")
       port map(   data  => data,
-                  result=> inverter);
+                  result=> inverted);
                   
-   result   <= not inverter;
+   result   <= not inverted;
 end implement;
 ----------------------------------------------------------------------------------------------------
 architecture implement of reduce_nor is
-   signal inverter   : std_logic;
+   signal inverted   : std_logic;
 
    component reduce is
       generic( gate  :     string);
@@ -271,13 +271,13 @@ begin
    reduce_imp  : reduce
       generic map(gate  => "and")
       port map(   data  => data,
-                  result=> inverter);
+                  result=> inverted);
 
-   result   <= not inverter;
+   result   <= not inverted;
 end implement;
 ----------------------------------------------------------------------------------------------------
 architecture implement of reduce_nxor is
-   signal inverter   : std_logic;
+   signal inverted   : std_logic;
    component reduce is
       generic( gate  :     string);
       port(    data  : in  std_logic_vector;
@@ -287,7 +287,7 @@ begin
    reduce_imp  : reduce
       generic map(gate  => "xor")
       port map(   data  => data,
-                  result=> inverter);
+                  result=> inverted);
     
-   result   <= not inverter;
+   result   <= not inverted;
 end implement;

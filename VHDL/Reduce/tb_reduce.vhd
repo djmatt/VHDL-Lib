@@ -23,15 +23,15 @@ end tb_reduce;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture sim of tb_reduce is
-   signal rst        : std_logic;
-   signal clk        : std_logic;
-   signal count_data : std_logic_vector(2 downto 0);
-   signal result_and : std_logic;
-   signal result_or  : std_logic;
-   signal result_xor : std_logic;
-   signal result_nand : std_logic;
-   signal result_nor  : std_logic;
-   signal result_nxor : std_logic;
+   signal rst           : std_logic;
+   signal clk           : std_logic;
+   signal count_data    : std_logic_vector(2 downto 0);
+   signal result_and    : std_logic;
+   signal result_or     : std_logic;
+   signal result_xor    : std_logic;
+   signal result_nand   : std_logic;
+   signal result_nor    : std_logic;
+   signal result_nxor   : std_logic;
 
 begin
 
