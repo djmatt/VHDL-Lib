@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Linear Feedback Shift Regsiter
+--        Linear Feedback Shift Register
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -65,7 +65,7 @@ library work;
 entity lfsr is
    port( --Process clock, every rising edge the LFSR updates the feedback with a new value
          clk         : in  std_logic;
-         --Ansychronous reset. While high: resets the LFSR to the seed value and sets the poly_mask
+         --Asynchronous reset. While high: resets the LFSR to the seed value and sets the poly_mask
          -- used for the feedback polynomial
          rst         : in  std_logic;
          --Place '1's in the bits where the polynomial calls for taps.  Read up on LFSR's before
@@ -106,7 +106,7 @@ begin
    shifter: process(clk, rst)
    begin
       if(rst = '1') then
-         --Typical vector assigments preserve the left-to-right bit order.  We need to preserve the
+         --Typical vector assignments preserve the left-to-right bit order.  We need to preserve the
          --0 to n order for this assignment.  The seed may not always be defined 0-to-n, but at
          --least we know polynomial is 0-to-n.
          for n in seed'low to seed'high loop
@@ -114,7 +114,7 @@ begin
          end loop;
       else
          if(rising_edge(clk)) then
-            --shift_reg is a concatonation of data_in and polynomial. By assigning the left-most
+            --shift_reg is a concatenation of data_in and polynomial. By assigning the left-most
             --bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
             polynomial <= shift_reg(polynomial'range);
          end if;
@@ -123,7 +123,7 @@ begin
 
    --The shift register updates every clock cycle, when it does, this generate loop calculates the
    --feedback result.  The result is the modulus-2 summation of specified polynomial taps.
-   --Modulus-2 addition is simply an xor operation.  It is critical that the result is calcuated
+   --Modulus-2 addition is simply an xor operation.  It is critical that the result is calculated
    --from right to left.  This ensures the feedback history is preserved.
    calc_feedback: for outbit in result'reverse_range generate
       signal polynomial_window   : std_logic_vector(polynomial'range);
@@ -170,14 +170,14 @@ begin
    process(clk, rst)
    begin
       if(rst = '1') then
-         --typical vector assigments preserve the left-to-right bit order,
+         --typical vector assignments preserve the left-to-right bit order,
          --we need to preserve the 0 to n order for this assignment
          for n in seed'low to seed'high loop
             polynomial(n-seed'low) <= seed(n); --seed may not always be defined 0-to-n, but at least we know polynomial is 0-to-n.
          end loop;
       else
          if(rising_edge(clk)) then
-            --shift_reg is a concatonation of data_in and polynomial,
+            --shift_reg is a concatenation of data_in and polynomial,
             --by assigning the left-most bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
             polynomial <= shift_reg(polynomial'range);
          end if;
@@ -192,7 +192,7 @@ begin
    begin
       tmp := (others => '0');
       tmp(result'length to (result'length + polynomial'length-1)) := polynomial;--way to say polynomial'(range + scalar)?
-      for outbit in result'reverse_range loop --It is critical that the result is calcuated from right to left.  This ensures the feedback history is preserved
+      for outbit in result'reverse_range loop --It is critical that the result is calculated from right to left.  This ensures the feedback history is preserved
          for tap in poly_mask_reg'range loop
             if(poly_mask_reg(tap) = '1') then
                tmp(outbit) := tmp(outbit) xor tmp(tap-poly_mask_reg'low+outbit+1); --subtracting poly_mask_reg'low is to handle situations where the poly_mask_reg'range is not 0-based (e.g. 1 to 15)

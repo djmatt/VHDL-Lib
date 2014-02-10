@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Reduce Testbench
+--        Reduce Test-bench
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -14,7 +14,7 @@ library work;
    use work.tb_clockgen_pkg.all;
    use work.reduce_pkg.all;
 
---This module is a testbench for simulating the reduce operation
+--This module is a test-bench for simulating the reduce operation
 entity tb_reduce is
 end tb_reduce;
 
@@ -30,7 +30,7 @@ architecture sim of tb_reduce is
    signal result_xor    : std_logic;
    signal result_nand   : std_logic;
    signal result_nor    : std_logic;
-   signal result_nxor   : std_logic;
+   signal result_xnor   : std_logic;
 
 begin
 
@@ -70,9 +70,9 @@ begin
    reduce_nor_test  : reduce_nor
       port map(data     => count_data,
                result   => result_nor);
-   reduce_nxor_test : reduce_nxor
+   reduce_xnor_test : reduce_xnor
       port map(data     => count_data,
-               result   => result_nxor);
+               result   => result_xnor);
                   
    --Main Process
    main: process

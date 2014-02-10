@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Clock generator for testbenches
+--        Clock generator for test-benches
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -23,7 +23,7 @@ end package;
 library ieee;
    use ieee.std_logic_1164.all;
 
--- Clock generator for testbenches/simulations.  Do not use for synthesis designs.
+-- Clock generator for test-benches/simulations.  Do not use for synthesis designs.
 entity tb_clockgen is
    generic( --Duration of one clock cycle in seconds.  Cycle starts at low logic.
             PERIOD      : time := 30ns;

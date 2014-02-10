@@ -35,7 +35,7 @@ entity descrambler is
    port(    --Process clock.  Every clock cycle unscrambled data in is processed through the
             --scrambler producing scrambled data out.
             clk                  : in  std_logic;
-            --Ansychronous reset. While high: resets the LFSR to the seed value and sets the
+            --Asynchronous reset. While high: resets the LFSR to the seed value and sets the
             --poly_mask used for the feedback polynomial
             rst                  : in  std_logic;
             --Place '1's in the bits where the polynomial calls for taps.  Read up on LFSR's before

@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Scrambler/Descramber Testbench
+--        Scrambler/Descramber Test-bench
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -15,7 +15,7 @@ library work;
    use work.scrambler_pkg.all;
    use work.descrambler_pkg.all;
 
---This module is a testbench for simulating the LFSR
+--This module is a test-bench for simulating the LFSR
 entity tb_lfsr is
 end tb_lfsr;
 

@@ -35,7 +35,7 @@ package reduce_pkg is
                result: out std_logic);
    end component;
 
-   component reduce_nxor is
+   component reduce_xnor is
       port(    data  : in  std_logic_vector;
                result: out std_logic);
    end component;
@@ -139,14 +139,14 @@ library ieee;
 library work;
    use work.reduce_pkg.all;
 
---Reduce-nxor is technically not a legitimate reduction operation.  This is because the nxor is not
+--Reduce-xnor is technically not a legitimate reduction operation.  This is because the xnor is not
 --an operation that satisfies the associative property.  Therefore this operation is the invert of 
 --result of the reduce-xor operation.  This reduce operation returns a 1 when there are an even
 --number of 1's in the vector, 0 otherwise.
-entity reduce_nxor is 
+entity reduce_xnor is 
    port(    data  : in  std_logic_vector;
             result: out std_logic);
-end reduce_nxor;
+end reduce_xnor;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
@@ -275,7 +275,7 @@ begin
    result   <= not inverted;
 end implement;
 ----------------------------------------------------------------------------------------------------
-architecture implement of reduce_nxor is
+architecture implement of reduce_xnor is
    signal inverted   : std_logic;
    component reduce is
       generic( gate  :     string);
