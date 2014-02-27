@@ -54,14 +54,14 @@ library ieee;
    
 library work;
    use work.lfsr_pkg.all;
-   use work.reduce_pkg.all;
+   use work.reduce_pkg.reduce_xor;
 
 --Linear feedback shift register
 --Using this module requires that the feedout be fed-back into feedin at some point.  The feedback
 --would normally be done internally, except some designs require modifying the feedback before
 --returning it to the shift register.  To support such robust designs the feedback is always
 --expected to be performed at a higher level, even when simple feedback is all that is required
---(i.e. feedin<=feedout;)
+--(e.g. feedin<=feedout;)
 entity lfsr is
    port( --Process clock, every rising edge the LFSR updates the feedback with a new value
          clk         : in  std_logic;
@@ -96,24 +96,24 @@ architecture structural of lfsr is
    signal result        : std_logic_vector(0 to (feedout'length-1));
 begin
 
-   --Set the polynomial mask when only while reset is asserted.
-   poly_mask_reg <= poly_mask when rst = '1' else poly_mask_reg;
-
    --load the left-most bits of shift_reg with the feedin
    data_in <= feedin;
 
    --Process to shift the feedback through a shift-register
    shifter: process(clk, rst)
    begin
-      if(rst = '1') then
-         --Typical vector assignments preserve the left-to-right bit order.  We need to preserve the
-         --0 to n order for this assignment.  The seed may not always be defined 0-to-n, but at
-         --least we know polynomial is 0-to-n.
-         for n in seed'low to seed'high loop
-            polynomial(n-seed'low) <= seed(n);
-         end loop;
-      else
-         if(rising_edge(clk)) then
+      if(rising_edge(clk)) then
+         if(rst = '1') then
+            --Typical vector assignments preserve the left-to-right bit order.  We need to preserve the
+            --0 to n order for this assignment.  The seed may not always be defined 0-to-n, but at
+            --least we know polynomial is 0-to-n.
+            for n in seed'low to seed'high loop
+               polynomial(n-seed'low) <= seed(n);
+            end loop;
+            
+            --Set the polynomial mask when only while reset is asserted.
+            poly_mask_reg <= poly_mask;
+         else   
             --shift_reg is a concatenation of data_in and polynomial. By assigning the left-most
             --bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
             polynomial <= shift_reg(polynomial'range);
@@ -123,8 +123,7 @@ begin
 
    --The shift register updates every clock cycle, when it does, this generate loop calculates the
    --feedback result.  The result is the modulus-2 summation of specified polynomial taps.
-   --Modulus-2 addition is simply an xor operation.  It is critical that the result is calculated
-   --from right to left.  This ensures the feedback history is preserved.
+   --Modulus-2 addition is simply an xor operation.
    calc_feedback: for outbit in result'reverse_range generate
       signal polynomial_window   : std_logic_vector(polynomial'range);
       signal final_polynomial    : std_logic_vector(polynomial'range);
@@ -162,23 +161,26 @@ architecture behave of lfsr is
    signal result        : std_logic_vector(0 to (feedout'length-1));
 begin
 
-   --Set the polynomial mask when only while reset is asserted.
-   poly_mask_reg <= poly_mask when rst = '1' else poly_mask_reg;
+   --load the left-most bits of shift_reg with the feedin
+   data_in <= feedin;
 
    --Process to shift the feedback through a shift-register
-   data_in <= feedin; --load the left-most bits of shift_reg with the feedin
-   process(clk, rst)
+   shifter: process(clk, rst)
    begin
-      if(rst = '1') then
-         --typical vector assignments preserve the left-to-right bit order,
-         --we need to preserve the 0 to n order for this assignment
-         for n in seed'low to seed'high loop
-            polynomial(n-seed'low) <= seed(n); --seed may not always be defined 0-to-n, but at least we know polynomial is 0-to-n.
-         end loop;
-      else
-         if(rising_edge(clk)) then
-            --shift_reg is a concatenation of data_in and polynomial,
-            --by assigning the left-most bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
+      if(rising_edge(clk)) then
+         if(rst = '1') then
+            --Typical vector assignments preserve the left-to-right bit order.  We need to preserve the
+            --0 to n order for this assignment.  The seed may not always be defined 0-to-n, but at
+            --least we know polynomial is 0-to-n.
+            for n in seed'low to seed'high loop
+               polynomial(n-seed'low) <= seed(n);
+            end loop;
+            
+            --Set the polynomial mask when only while reset is asserted.
+            poly_mask_reg <= poly_mask;
+         else   
+            --shift_reg is a concatenation of data_in and polynomial. By assigning the left-most
+            --bits of shift_reg to polynomial(the right-most bits), we achieve a right shift.
             polynomial <= shift_reg(polynomial'range);
          end if;
       end if;
