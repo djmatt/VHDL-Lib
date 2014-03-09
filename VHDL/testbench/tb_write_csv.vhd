@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Clock generator for test-benches
+--        CSV file writer for testbenches
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -9,34 +9,49 @@
 library ieee;
    use ieee.std_logic_1164.all;
 
-package tb_clockgen_pkg is
-   component tb_clockgen is
-      generic( PERIOD      : time := 30ns;
-               DUTY_CYCLE  : real := 0.50);
-      port(    clk         : out  std_logic);
+package tb_write_csv_pkg is
+   component tb_write_csv is
+      generic( FILENAME : string := "temp.csv");
+      port(    clk      : in  std_logic;
+               data     : in  std_logic_vector);
    end component;
 end package;
 
 ----------------------------------------------------------------------------------------------------
 --        ENTITY
 ----------------------------------------------------------------------------------------------------
+library std;
+   use std.textio.all;
+
 library ieee;
    use ieee.std_logic_1164.all;
+   use ieee.std_logic_textio.all;
 
--- Clock generator for test-benches/simulations.  Do not use for synthesis designs.
-entity tb_clockgen is
-   generic( --Duration of one clock cycle in seconds.  Cycle starts at low logic.
-            PERIOD      : time := 30ns;
-            --Percentage of the cycle spent at high logic.  Valid Values between 0 and 1.
-            DUTY_CYCLE  : real := 0.50);
-   port(    --The generated clock signal
-            clk         : out  std_logic);
-end tb_clockgen;
+-- TODO
+entity tb_write_csv is
+   generic( -- TODO
+            FILENAME : string := "temp.csv");
+   port(    -- TODO
+            clk      : in  std_logic;
+            -- TODO
+            data     : in  std_logic_vector);
+end tb_write_csv;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
-architecture behave of tb_clockgen is
+architecture behave of tb_write_csv is
+   -- TODO
+   file output: text is out FILENAME;
 begin
+
+   writer : process 
+      variable L: line; 
+   begin
+      wait until rising_edge(clk);
+      write(L, string'("0x"));
+      hwrite(L, data);
+      writeline(output, L);
+   end process;
 
 end behave;
