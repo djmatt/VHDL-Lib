@@ -12,6 +12,7 @@ library ieee;
 
 library work;
    use work.tb_clockgen_pkg.all;
+   use work.tb_write_csv_pkg.all;
    use work.scrambler_pkg.all;
    use work.descrambler_pkg.all;
 
@@ -31,7 +32,7 @@ architecture sim of tb_lfsr is
 
    constant polynomial     : std_logic_vector(14 downto 0) := "110000000000000";
    constant seed1          : std_logic_vector(14 downto 0) := "010101010101010";
-   constant seed2          : std_logic_vector(14 downto 0) := "101010101010101";
+   constant seed2          : std_logic_vector(14 downto 0) := "100010100010100";
 begin
 
    --Instantiate clock generator
@@ -70,6 +71,12 @@ begin
                   seed                 => seed2,
                   scrambled_datain     => scrambled_data,
                   unscrambled_dataout  => unscrambled_data);
+                  
+   writer: tb_write_csv
+      generic map(FILENAME => "scrambled_data.csv")
+      port map(   clk      => clk,
+                  data     => scrambled_data);
+                 
 
    --Main Process
    main: process
