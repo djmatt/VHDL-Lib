@@ -27,13 +27,13 @@ library ieee;
    use ieee.std_logic_1164.all;
    use ieee.std_logic_textio.all;
 
--- TODO
+-- This entity writes the contents of a signal to a csv file.  Only one signal is written to file.
 entity tb_write_csv is
-   generic( -- TODO
+   generic( -- The name of the file to write the data to.
             FILENAME : string := "temp.csv");
-   port(    -- TODO
+   port(    -- the clock synchronous with data
             clk      : in  std_logic;
-            -- TODO
+            -- This signal will be written to a file on each rising clock edge
             data     : in  std_logic_vector);
 end tb_write_csv;
 
@@ -41,7 +41,6 @@ end tb_write_csv;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture behave of tb_write_csv is
-   -- TODO
    file output: text is out FILENAME;
 begin
 

@@ -24,7 +24,7 @@ end tb_lfsr;
 architecture sim of tb_lfsr is
    signal rst        : std_logic := '0';
    signal clk        : std_logic := '0';
-   signal feedback   : std_logic_vector(14 downto 0);
+   signal feedback   : std_logic_vector(15 downto 0);
 
    signal polynomial : std_logic_vector(15 downto 0) := "0000000000000000";
    signal seed       : std_logic_vector(15 downto 0) := "0000000000000000";
@@ -32,7 +32,7 @@ begin
 
    --Instantiate clock generator
    clk1 : tb_clockgen
-      generic map(PERIOD      => 30ns,
+      generic map(PERIOD      => 10ns,
                   DUTY_CYCLE  => 0.50)
       port map(   clk         => clk);
 
@@ -56,7 +56,7 @@ begin
       polynomial <= "1000000000010110"; --x^16 + x^5 + x^3 + x^2 + 1
       seed       <= "1111111111111111";
       rst <= '1';
-      wait for 50ns;
+      wait for 10ns;
       rst <= '0';
       wait;
    end process;
