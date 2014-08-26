@@ -56,6 +56,7 @@ begin
    end process;
    
    --Select output
+   --TODO: for larger than biphase implement this part using a circular shift register with a single bit for each output
    tictoc : process(clk, rst)
    begin
       if(rising_edge(clk)) then
