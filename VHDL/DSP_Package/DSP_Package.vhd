@@ -32,6 +32,29 @@ package dsp_pkg is
    subtype fir_sig is signed(NUM_FIR_BITS-1 downto 0);
    type fir_sig_array is array (natural range <>) of fir_sig;
    
+   --Coefficients for FIR filters
+   constant LOW_PASS    : coefficient_array := (x"0000",
+                                                x"02e4",
+                                                x"0000",
+                                                x"fc21",
+                                                x"0000",
+                                                x"0595",
+                                                x"0000",
+                                                x"f682",
+                                                x"0000",
+                                                x"1cc4",
+                                                x"2d5f",
+                                                x"1cc4",
+                                                x"0000",
+                                                x"f682",
+                                                x"0000",
+                                                x"0595",
+                                                x"0000",
+                                                x"fc21",
+                                                x"0000",
+                                                x"02e4",
+                                                x"0000");
+   
 end package;
 
 ----------------------------------------------------------------------------------------------------

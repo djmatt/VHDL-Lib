@@ -53,25 +53,25 @@ end fir_tap;
 --        ARCHITECTURE (behavioral)
 ----------------------------------------------------------------------------------------------------
 architecture behave of fir_tap is
-   signal intermediate  : sig;
+   signal intermediate  : sig := (others => '0');
 begin  
 
    --delay the signal 2 clocks (one more than the running sum)
-   delay_sig : process(clk, rst)
+   delay_sig : process(clk)
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then   
-            intermediate   <= (others => '0');
             sig_out        <= (others => '0');
+            intermediate   <= (others => '0');
          else
-            intermediate   <= sig_in;
             sig_out        <= intermediate;
+            intermediate   <= sig_in;
          end if;
       end if;
    end process;
    
    --update the sum (includes 1 clock delay)
-   update_sum : process(clk, rst)
+   update_sum : process(clk)
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then

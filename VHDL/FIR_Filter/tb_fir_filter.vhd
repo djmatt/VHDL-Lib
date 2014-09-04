@@ -25,6 +25,11 @@ end tb_fir_filter;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture sim of tb_fir_filter is
+--   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
+--   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_filtered.csv";  
+   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_filtered.csv";  
+  
    signal rst        : std_logic := '0';
    signal clk        : std_logic := '0';
    signal sig        : std_logic_vector(NUM_SIG_BITS-1 downto 0) := (others => '0');
@@ -40,14 +45,14 @@ begin
    
    --Instantiate file reader
    reader : tb_read_csv
-      generic map(FILENAME => "C:\Users\Matt\Documents\MATLAB\test.csv")
+      generic map(FILENAME => INPUT_FILE)
       port map(   clk      => clk,
                   data     => sig);
    
 
    --Instantiate unit under test
    uut : entity work.fir_filter(behave)
-      generic map(h    => (x"0000", x"7fff", x"0000"))
+      generic map(h    => LOW_PASS)
       port map(   clk  => clk,
                   rst  => rst,
                   x    => signed(sig),
@@ -55,7 +60,7 @@ begin
                                     
    --Instantiate a file writer
    writer : tb_write_csv
-      generic map(FILENAME => "prng.csv")
+      generic map(FILENAME => OUTPUT_FILE)
       port map(   clk      => clk,
                   data     => std_logic_vector(filtered(30 downto 15)));
 
