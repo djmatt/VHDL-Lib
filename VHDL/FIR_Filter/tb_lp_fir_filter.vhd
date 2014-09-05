@@ -15,20 +15,20 @@ library work;
    use work.tb_read_csv_pkg.all;
    use work.tb_write_csv_pkg.all;
    use work.dsp_pkg.all;
-   use work.fir_filter_pkg.all;
+   use work.lp_fir_filter_pkg.all;
 
 --This module is a test-bench for simulating the fir filter
-entity tb_fir_filter is
-end tb_fir_filter;
+entity tb_lp_fir_filter is
+end tb_lp_fir_filter;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
-architecture sim of tb_fir_filter is
+architecture sim of tb_lp_fir_filter is
 --   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_filtered.csv";  
+--   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_lp_filtered.csv";  
    constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_filtered.csv";  
+   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_lp_filtered.csv";  
   
    signal rst        : std_logic := '0';
    signal clk        : std_logic := '0';
@@ -51,7 +51,7 @@ begin
    
 
    --Instantiate unit under test
-   uut : entity work.fir_filter(behave)
+   uut : entity work.lp_fir_filter(behave)
       generic map(h    => LOW_PASS)
       port map(   clk  => clk,
                   rst  => rst,

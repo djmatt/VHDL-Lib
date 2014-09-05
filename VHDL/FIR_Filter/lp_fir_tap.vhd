@@ -14,7 +14,7 @@ library work;
    
 package lp_fir_tap_pkg is
 
-   --FIR tap component declaration
+   --Linear Phase FIR tap component declaration
    component lp_fir_tap is
       port(    clk                  : in  std_logic;
                rst                  : in  std_logic;
@@ -50,7 +50,7 @@ entity lp_fir_tap is
             return_sig_in        : in  sig;
             sum_in               : in  fir_sig;
             sum_out              : out fir_sig);
-end fir_tap;
+end lp_fir_tap;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE (behavioral)
@@ -58,7 +58,7 @@ end fir_tap;
 architecture behave of lp_fir_tap is
    signal sig_delay        : sig_array(1 to 2)     := (others => (others => '0'));
    signal return_sig_delay : sig                   := (others => '0');
-   signal pre_add_sum      : signed(16 downto 0)   := (others => '0');
+   signal pre_add_sum      : signed(NUM_SIG_BITS downto 0) := (others => '0');
    signal product          : fir_sig               := (others => '0');
 begin  
 
@@ -67,16 +67,17 @@ begin
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then   
-            sig_delay(2)      <= (others => '0');
-            sig_delay(1)      <= (others => '0');
+            sig_delay         <= (others => (others => '0'));
             return_sig_delay  <= (others => '0');
          else
-            sig_delay(2)      <= sig_delay(1);
             sig_delay(1)      <= sig_in;
-            return_sig_delay  <= return_sig;
+            sig_delay(2)      <= sig_delay(1);
+            return_sig_delay  <= return_sig_in;
          end if;
       end if;
    end process;
+   
+   sig_out <= sig_delay(2);
       
    --pre add the signal and returning signal; register the result
    pre_add : process(clk)
@@ -85,7 +86,7 @@ begin
          if(rst = '1') then   
             pre_add_sum <= (others => '0');
          else
-            pre_add_sum <= sig_delay(2) + return_sig_delay;
+            pre_add_sum <= resize(sig_delay(2), NUM_SIG_BITS+1) + resize(return_sig_delay, NUM_SIG_BITS+1);
          end if;
       end if;
    end process;
@@ -97,10 +98,10 @@ begin
          if(rst = '1') then   
             product <= (others => '0');
          else
-            product <= resize(sig_in * coef, NUM_FIR_BITS);
+            product <= resize(pre_add_sum * coef, NUM_FIR_BITS);
          end if;
       end if;
-   end
+   end process;
    
    --update the running sum 
    update_sum : process(clk)

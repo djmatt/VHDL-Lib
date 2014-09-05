@@ -61,11 +61,11 @@ begin
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then   
-            sig_out        <= (others => '0');
             intermediate   <= (others => '0');
+            sig_out        <= (others => '0');
          else
-            sig_out        <= intermediate;
             intermediate   <= sig_in;
+            sig_out        <= intermediate;
          end if;
       end if;
    end process;
