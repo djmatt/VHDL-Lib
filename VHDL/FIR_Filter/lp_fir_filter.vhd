@@ -47,7 +47,7 @@ end lp_fir_filter;
 architecture behave of lp_fir_filter is
    constant N              : natural := h'length;
    constant NTAPS          : natural := N - N/2;
-   constant RETURN_DELAY   : natural := NTAPS*2;
+   constant RETURN_DELAY   : natural := NTAPS*2-1;
    constant FIRST_TAP      : natural := h'low;
    constant LAST_TAP       : natural := h'low + NTAPS-1;
    

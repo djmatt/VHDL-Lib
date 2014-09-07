@@ -45,8 +45,8 @@ end fir_filter;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture behave of fir_filter is
-   signal x_chain       : sig_array(h'range);
-   signal running_sum   : fir_sig_array(h'range);
+   signal x_chain       : sig_array(h'range)       := (others  => (others => '0'));
+   signal running_sum   : fir_sig_array(h'range)   := (others  => (others => '0'));
 begin
    
    filter_loop : for tap in h'low to h'high generate

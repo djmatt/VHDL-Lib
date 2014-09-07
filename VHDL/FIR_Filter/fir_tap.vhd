@@ -53,31 +53,44 @@ end fir_tap;
 --        ARCHITECTURE (behavioral)
 ----------------------------------------------------------------------------------------------------
 architecture behave of fir_tap is
-   signal intermediate  : sig := (others => '0');
+   signal sig_delay        : sig_array(1 to 2)     := (others => (others => '0'));
+   signal product          : fir_sig               := (others => '0');
 begin  
-
-   --delay the signal 2 clocks (one more than the running sum)
+   
+   --delay the input signal
    delay_sig : process(clk)
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then   
-            intermediate   <= (others => '0');
-            sig_out        <= (others => '0');
+            sig_delay         <= (others => (others => '0'));
          else
-            intermediate   <= sig_in;
-            sig_out        <= intermediate;
+            sig_delay(1)      <= sig_in;
+            sig_delay(2)      <= sig_delay(1);
+         end if;
+      end if;
+   end process;
+   sig_out <= sig_delay(2);
+   
+   --multiply the signal to the tap coefficient
+   multiply : process(clk)
+   begin
+      if(rising_edge(clk)) then
+         if(rst = '1') then   
+            product <= (others => '0');
+         else
+            product <= resize(sig_delay(2) * coef, NUM_FIR_BITS);
          end if;
       end if;
    end process;
    
-   --update the sum (includes 1 clock delay)
+   --update the sum 
    update_sum : process(clk)
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then
             sum_out <= (others => '0');
          else 
-            sum_out <= sum_in + resize(sig_in * coef, NUM_FIR_BITS);
+            sum_out <= sum_in + product;
          end if;
       end if;
    end process;

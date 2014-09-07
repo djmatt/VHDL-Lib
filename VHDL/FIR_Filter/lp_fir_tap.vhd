@@ -58,7 +58,7 @@ end lp_fir_tap;
 architecture behave of lp_fir_tap is
    signal sig_delay        : sig_array(1 to 2)     := (others => (others => '0'));
    signal return_sig_delay : sig                   := (others => '0');
-   signal pre_add_sum      : signed(NUM_SIG_BITS downto 0) := (others => '0');
+   signal pre_add_sum      : summed_sig            := (others => '0');
    signal product          : fir_sig               := (others => '0');
 begin  
 
@@ -75,8 +75,7 @@ begin
             return_sig_delay  <= return_sig_in;
          end if;
       end if;
-   end process;
-   
+   end process;   
    sig_out <= sig_delay(2);
       
    --pre add the signal and returning signal; register the result
@@ -86,7 +85,7 @@ begin
          if(rst = '1') then   
             pre_add_sum <= (others => '0');
          else
-            pre_add_sum <= resize(sig_delay(2), NUM_SIG_BITS+1) + resize(return_sig_delay, NUM_SIG_BITS+1);
+            pre_add_sum <= resize(sig_delay(2), NUM_SUMMED_SIG_BITS) + resize(return_sig_delay, NUM_SUMMED_SIG_BITS);
          end if;
       end if;
    end process;

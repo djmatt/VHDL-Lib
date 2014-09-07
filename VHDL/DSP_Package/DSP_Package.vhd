@@ -19,6 +19,8 @@ package dsp_pkg is
    --Definitions for signal data
    constant NUM_SIG_BITS : positive := 16;
    subtype sig is signed(NUM_SIG_BITS-1 downto 0);
+   subtype summed_sig is signed(NUM_SIG_BITS downto 0); --for when 2 sigs are added together
+   constant NUM_SUMMED_SIG_BITS : positive := NUM_SIG_BITS+1;
    type sig_array is array (natural range <>) of sig;
    
    --Types for fir signal data - for use for internal FIR calculations
