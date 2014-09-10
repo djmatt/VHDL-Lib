@@ -35,6 +35,7 @@ package dsp_pkg is
    type fir_sig_array is array (natural range <>) of fir_sig;
    
    --Coefficients for FIR filters
+   constant ZERO_COEF   : coefficient       := x"0000";
    constant LOW_PASS    : coefficient_array := (x"0000",
                                                 x"02e4",
                                                 x"0000",
