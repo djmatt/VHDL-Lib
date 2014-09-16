@@ -23,7 +23,8 @@ end package;
 library ieee;
    use ieee.std_logic_1164.all;
 
--- Clock generator for test-benches/simulations.  Do not use for synthesis designs.
+-- Clock generator for test-benches/simulations.  Do not use for synthesis designs. When used 
+-- simultaneously with other clock-generators should result in phase-aligned clocks.
 entity tb_clockgen is
    generic( --Duration of one clock cycle in seconds.  Cycle starts at low logic.
             PERIOD      : time := 30ns;
@@ -44,9 +45,9 @@ begin
 
    tictoc: process
    begin
-      clock <= '0';
-      wait for (PERIOD - (PERIOD * DUTY_CYCLE));
       clock <= '1';
+      wait for (PERIOD - (PERIOD * DUTY_CYCLE));
+      clock <= '0';
       wait for (PERIOD * DUTY_CYCLE);
    end process;
 end behave;
