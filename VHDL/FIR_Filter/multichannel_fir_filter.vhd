@@ -34,7 +34,7 @@ library ieee;
 
 library work;
    use work.dsp_pkg.all;
-   use work.fir_tap_pkg.all;
+   use work.multichannel_fir_tap_pkg.all;
    use work.muxer_pkg.all;
    use work.demuxer_pkg.all;
 
@@ -72,7 +72,7 @@ begin
    begin
 
       head_tap_gen : if tap = h'low generate
-         head_tap : fir_tap
+         head_tap : multichannel_fir_tap
          port map(clk      => clk_2x,
                   rst      => rst,
                   coef     => h(tap),
@@ -83,7 +83,7 @@ begin
       end generate; --if head tap
       
       tail_taps_gen : if tap /= h'low generate
-         tail_tap : fir_tap
+         tail_tap : multichannel_fir_tap
          port map(clk      => clk_2x,
                   rst      => rst,
                   coef     => h(tap),
@@ -103,11 +103,8 @@ begin
                sigs     => std_logic_vector(running_sum(h'high)),
                sig_1    => y1_slv, 
                sig_2    => y2_slv); 
-   
-   --y1 <= resize(fir_sig(y1_slv),NUM_FIR_BITS);
-   --y2 <= resize(fir_sig(y2_slv),NUM_FIR_BITS);
-   
-   y1 <= (others => '0');
-   y2 <= (others => '0');
+      
+   y1 <= signed(y1_slv);
+   y2 <= signed(y2_slv);
    
 end behave;

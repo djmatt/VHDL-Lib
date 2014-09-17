@@ -53,6 +53,8 @@ architecture behave of demuxer is
    signal sel1       : std_logic_vector(sig_1'range) := (others => '0');
    signal sel2       : std_logic_vector(sig_2'range) := (others => '0');
    signal selx       : std_logic_vector(sig_1'range) := (others => '0');
+   signal sig_1_reg  : std_logic_vector(sig_1'range)  := (others => '0');
+   signal sig_2_reg  : std_logic_vector(sig_2'range)  := (others => '0');
 
 begin
    
@@ -102,13 +104,16 @@ begin
    begin
       if(rising_edge(clk)) then
          if(rst = '1') then
-            sig_1 <= (others => '0');
-            sig_2 <= (others => '0');
+            sig_1_reg <= (others => '0');
+            sig_2_reg <= (others => '0');
          else
-            sig_1 <= sel1;
-            sig_2 <= sel2;
+            sig_1_reg <= sel1;
+            sig_2_reg <= sel2;
          end if;
       end if;
    end process;   
+   
+   sig_1 <= sig_1_reg;
+   sig_2 <= sig_2_reg;
    
 end behave;
