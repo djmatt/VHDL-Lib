@@ -66,7 +66,8 @@ begin
                   
    --Instantiate unit under test
    uut : entity work.multichannel_fir_filter(behave)
-      generic map(h        => LOW_PASS)
+      generic map(h0       => LOW_PASS,
+                  h1       => HIGH_PASS)
       port map(   clk      => clk,
                   clk_2x   => clk_2x,
                   rst      => rst,

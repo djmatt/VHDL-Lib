@@ -58,6 +58,28 @@ package dsp_pkg is
                                                 x"02e4",
                                                 x"0000");
                                                 
+   constant HIGH_PASS   : coefficient_array := (x"0000",
+                                                x"ffb1",
+                                                x"0000",
+                                                x"0113",
+                                                x"0000",
+                                                x"fcf1",
+                                                x"0000",
+                                                x"07bc",
+                                                x"0000",
+                                                x"e3dd",
+                                                x"2d5f",
+                                                x"e3dd",
+                                                x"0000",
+                                                x"07bc",
+                                                x"0000",
+                                                x"fcf1",
+                                                x"0000",
+                                                x"0113",
+                                                x"0000",
+                                                x"ffb1",
+                                                x"0000");
+                                                
    constant PASS_THRU   : coefficient_array := (x"0000",
                                                 x"0000",
                                                 x"0000",

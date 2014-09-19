@@ -54,6 +54,7 @@ end multichannel_fir_tap;
 ----------------------------------------------------------------------------------------------------
 architecture behave of multichannel_fir_tap is
    signal sig_delay        : sig_array(1 to 4)     := (others => (others => '0'));
+   signal coef_reg         : coefficient           := (others => '0');
    signal product          : fir_sig               := (others => '0');
 begin  
    
@@ -73,6 +74,18 @@ begin
    end process;
    sig_out <= sig_delay(3);
    
+   --register the coefficient
+   reg_coef : process(clk)
+   begin
+      if(rising_edge(clk)) then
+         if(rst = '1') then   
+            coef_reg <= (others => '0');
+         else
+            coef_reg <= coef;
+         end if;
+      end if;
+   end process;
+   
    --multiply the signal to the tap coefficient
    multiply : process(clk)
    begin
@@ -80,7 +93,7 @@ begin
          if(rst = '1') then   
             product <= (others => '0');
          else
-            product <= resize(sig_delay(4) * coef, NUM_FIR_BITS);
+            product <= resize(sig_delay(4) * coef_reg, NUM_FIR_BITS);
          end if;
       end if;
    end process;
