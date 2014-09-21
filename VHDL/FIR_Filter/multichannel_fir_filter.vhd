@@ -22,7 +22,8 @@ package multichannel_fir_filter_pkg is
                rst                  : in  std_logic;
                x1                   : in  sig;
                x2                   : in  sig;
-               y                    : out fir_sig);
+               y1                   : out fir_sig;
+               y2                   : out fir_sig);
    end component;
 end package;
 
@@ -84,7 +85,8 @@ begin
                      sig1     => std_logic_vector(h0(tap)),
                      sig2     => std_logic_vector(h1(tap)),
                      sigs     => coef);
-
+                     
+      --generate taps of the fir filter
       head_tap_gen : if tap = h0'low generate
          head_tap : multichannel_fir_tap
          port map(clk      => clk_2x,
