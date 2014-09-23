@@ -48,7 +48,6 @@ begin
       variable L: line; 
    begin
       wait until rising_edge(clk);
-      write(L, string'("0x"));
       hwrite(L, data);
       writeline(output, L);
    end process;
