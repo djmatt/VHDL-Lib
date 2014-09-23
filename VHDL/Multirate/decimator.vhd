@@ -51,40 +51,40 @@ architecture behave of decimator is
                                              x"0000",
                                              x"0000",
                                              x"0000",
-                                             x"2d5f",
+                                             x"4010",
                                              x"0000",
                                              x"0000",
                                              x"0000",
                                              x"0000",
                                              x"0000");
-   
+                                             
    constant DEC_2    : coefficient_array := (x"0000",
-                                             x"02e4",
-                                             x"fc21",
-                                             x"0595",
-                                             x"f682",
-                                             x"1cc4",
-                                             x"1cc4",
-                                             x"f682",
-                                             x"0595",
-                                             x"fc21",
-                                             x"02e4");
+                                             x"0070",
+                                             x"fe7b",
+                                             x"0453",
+                                             x"f512",
+                                             x"27c2",
+                                             x"27c2",
+                                             x"f512",
+                                             x"0453",
+                                             x"fe7b",
+                                             x"0070");
       
-   signal sig1       :  std_logic_vector(sig_high'range);
-   signal sig2       :  std_logic_vector(sig_high'range);
-   signal filtered1  :  fir_sig;
-   signal filtered2  :  fir_sig;
-   signal sum        :  fir_sig;
+   signal sig1       :  sig      := (others => '0');
+   signal sig2       :  sig      := (others => '0');
+   signal filtered1  :  fir_sig  := (others => '0');
+   signal filtered2  :  fir_sig  := (others => '0');
+   signal sum        :  fir_sig  := (others => '0');
 begin
    
    --Demux the signal   
    demux_sig : demuxer
-   port map(clk      => clk_low, 
-            clk_2x   => clk_high, 
-            rst      => rst, 
-            sigs     => std_logic_vector(sig_high),
-            sig1     => sig1, 
-            sig2     => sig2); 
+   port map(clk            => clk_low, 
+            clk_2x         => clk_high, 
+            rst            => rst, 
+            sigs           => std_logic_vector(sig_high),
+            sig(sig1)      => sig1, 
+            sig(sig2)      => sig2); 
    
    --Low pass the demuxed signals using the multichannel approach
    anti_alias : multichannel_fir_filter
@@ -93,8 +93,8 @@ begin
       port map(   clk      => clk_low,
                   clk_2x   => clk_high,
                   rst      => rst,
-                  x1       => signed(sig1),
-                  x2       => signed(sig2),
+                  x1       => sig1,
+                  x2       => sig2,
                   y1       => filtered1,
                   y2       => filtered2);
    

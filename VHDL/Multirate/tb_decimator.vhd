@@ -27,16 +27,16 @@ end tb_fir_filter;
 architecture sim of tb_fir_filter is
 --   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig.csv";
 --   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_decimated.csv";  
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_decimated.csv";  
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
+--   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
+--   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_decimated.csv";  
+   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
   
    signal rst        : std_logic := '0';
    signal clk_10ns   : std_logic := '0';
    signal clk_20ns   : std_logic := '0';
-   signal sig_in     : std_logic_vector(NUM_SIG_BITS-1 downto 0) := (others => '0');
-   signal sig_out    : sig := (others => '0');
+   signal sig_in     : sig       := (others => '0');
+   signal sig_out    : sig       := (others => '0');
 begin
 
    --Instantiate clock generator
@@ -50,20 +50,18 @@ begin
                   DUTY_CYCLE  => 0.50)
       port map(   clk         => clk_20ns);
       
-   
    --Instantiate file reader
    reader : tb_read_csv
-      generic map(FILENAME => INPUT_FILE)
-      port map(   clk      => clk_10ns,
-                  data     => sig_in);
-   
+      generic map(FILENAME    => INPUT_FILE)
+      port map(   clk         => clk_10ns,
+                  sig(data)   => sig_in);
 
    --Instantiate unit under test
    uut : entity work.decimator(behave)
       port map(   clk_high => clk_10ns,
                   clk_low  => clk_20ns,
                   rst      => rst,
-                  sig_high => signed(sig_in),
+                  sig_high => sig_in,
                   sig_low  => sig_out);
                                     
    --Instantiate a file writer
