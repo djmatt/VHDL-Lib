@@ -58,6 +58,7 @@ begin
 
    --Instantiate unit under test
    uut : entity work.interpolator(behave)
+      generic map(h        => LOW_PASS)
       port map(   clk_high => clk_10ns,
                   clk_low  => clk_20ns,
                   rst      => rst,

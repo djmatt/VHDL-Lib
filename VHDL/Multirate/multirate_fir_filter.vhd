@@ -55,15 +55,16 @@ begin
    
    --Decimate the signal by 2
    downsampling : decimator
-   port map(   clk_high => clk_high,
-               clk_low  => clk_low,
-               rst      => rst,
-               sig_high => x,
-               sig_low  => decimated);
+      generic map(h        => LOW_PASS)
+      port map(   clk_high => clk_high,
+                  clk_low  => clk_low,
+                  rst      => rst,
+                  sig_high => x,
+                  sig_low  => decimated);
    
    --Filter the decimated signal
    filter : fir_filter
-      generic map(h    => HIGH_PASS)
+      generic map(h    => h)
       port map(   clk  => clk_low,
                   rst  => rst,
                   x    => decimated,
@@ -71,10 +72,11 @@ begin
    
    --Interpolate the filtered signal up by 2
    upsample : interpolator
-   port map(   clk_high => clk_high,
-               clk_low  => clk_low,
-               rst      => rst,
-               sig_low  => filtered(30 downto 15),
-               sig_high => y);
+      generic map(h        => LOW_PASS)
+      port map(   clk_high => clk_high,
+                  clk_low  => clk_low,
+                  rst      => rst,
+                  sig_low  => filtered(30 downto 15),
+                  sig_high => y);
    
 end behave;

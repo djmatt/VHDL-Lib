@@ -103,14 +103,39 @@ package dsp_pkg is
                                                 x"0000",
                                                 x"0000");
    
+   --Function declarations
+--   type slice_type is array(natural range <>) of integer;
+   function slice_coefficient_array (  original_array : coefficient_array; 
+                                       num_cuts       : integer;
+                                       cut            : integer) return coefficient_array;
    
 end package;
-
+ 
 ----------------------------------------------------------------------------------------------------
 --        PACKAGE BODY
 ----------------------------------------------------------------------------------------------------
---library ieee;
---   use ieee.std_logic_1164.all;
---
---package body lfsr_pkg is
---end package body;
+library ieee;
+   use ieee.std_logic_1164.all;
+
+   
+package body dsp_pkg is
+   
+   --This function slices a coefficient array into the polyphase slice of that array.
+   --The original array is the coefficient array to be sliced
+   --num_cuts is the number of sub-arrays that can be created
+   --cut is the 1-based identifier of the cut desired (e.g. when num_cuts is 2, cut can be 1 or 2)
+   function slice_coefficient_array (  original_array : coefficient_array; 
+                                       num_cuts       : integer;
+                                       cut            : integer) return coefficient_array is
+      
+      constant slice_len   : integer := (original_array'length - cut-1 + num_cuts) / num_cuts;
+      constant result_len  : integer := (original_array'length - 1 + num_cuts) / num_cuts;
+      variable result      : coefficient_array(1 to result_len)  := (others => (others => '0'));
+   begin
+      for index in 1 to slice_len loop
+         result(index) := original_array(cut-1 + ((index-1)*num_cuts));
+      end loop;
+      return result;
+   end function;
+   
+end package body;
