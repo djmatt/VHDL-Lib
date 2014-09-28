@@ -77,7 +77,7 @@ begin
          if(rst = '1') then
             selector <= INIT_SEL;
          else
-            selector <= std_logic_vector(rotate_left(unsigned(selector), 1));
+            selector <= std_logic_vector(rotate_right(unsigned(selector), 1));
          end if;
       end if;
    end process;

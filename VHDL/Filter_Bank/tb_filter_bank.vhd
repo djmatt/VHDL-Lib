@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
---        Multirate Fir Filter Testbench
+--        Filter Bank Testbench
 ----------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
@@ -15,28 +15,26 @@ library work;
    use work.tb_read_csv_pkg.all;
    use work.tb_write_csv_pkg.all;
    use work.dsp_pkg.all;
-   use work.multirate_fir_filter_pkg.all;
+   use work.filter_bank_pkg.all;
 
 --This module is a test-bench for simulating the fir filter
-entity tb_multirate_fir_filter is
-end tb_multirate_fir_filter;
+entity tb_filter_bank is
+end tb_filter_bank;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
-architecture sim of tb_multirate_fir_filter is
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig.csv";  
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_multirated.csv";
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs2.csv";  
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs2_multirated.csv";
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_half.csv";  
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_half_multirated.csv";
+architecture sim of tb_filter_bank is
+   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_filter_bank.csv";  
   
-   signal rst        : std_logic := '0';
-   signal clk_10ns   : std_logic := '0';
-   signal clk_20ns   : std_logic := '0';
-   signal sig_in     : sig       := (others => '0');
-   signal sig_out    : sig       := (others => '0');
+   signal rst           : std_logic := '0';
+   signal clk_10ns      : std_logic := '0';
+   signal clk_20ns      : std_logic := '0';
+   signal clk_40ns      : std_logic := '0';
+   signal clk_80ns      : std_logic := '0';
+   signal sig_in        : sig       := (others => '0');
+   signal sig_out       : sig       := (others => '0');
 begin
 
    --Instantiate clock generator
@@ -49,26 +47,41 @@ begin
       generic map(PERIOD      => 20ns,
                   DUTY_CYCLE  => 0.50)
       port map(   clk         => clk_20ns);
-   
+
+   clk3 : tb_clockgen
+      generic map(PERIOD      => 40ns,
+                  DUTY_CYCLE  => 0.50)
+      port map(   clk         => clk_40ns);
+
+   clk4 : tb_clockgen
+      generic map(PERIOD      => 80ns,
+                  DUTY_CYCLE  => 0.50)
+      port map(   clk         => clk_80ns);
+
    --Instantiate file reader
    reader : tb_read_csv
       generic map(FILENAME    => INPUT_FILE)
       port map(   clk         => clk_10ns,
                   sig(data)   => sig_in);
-                  
-   uut : multirate_fir_filter
-   generic map(h        => LOW_PASS)
-   port map(   clk_low  => clk_20ns,
-               clk_high => clk_10ns,
-               rst      => rst,
-               x        => sig_in,
-               y        => sig_out);
+
+   --Instantiate unit under test
+   uut : entity work.filter_bank(behave)
+      generic map(low_pass    => NYQUIST_LOW_BANK,
+                  high_pass   => NYQUIST_HIGH_BANK)
+      port map(   clk0        => clk_10ns,
+                  clk1        => clk_20ns,
+                  clk2        => clk_40ns,
+                  clk3        => clk_80ns,
+                  rst         => rst,
+                  x           => sig_in,
+                  y           => sig_out);
                                     
    --Instantiate a file writer
-   writer : tb_write_csv
+   writer1 : tb_write_csv
       generic map(FILENAME => OUTPUT_FILE)
       port map(   clk      => clk_10ns,
                   data     => std_logic_vector(sig_out));
+
 
    --Main Process
    --TODO: Add a check for end of file, once reached terminate simulation.

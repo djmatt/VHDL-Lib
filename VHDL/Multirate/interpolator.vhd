@@ -48,8 +48,8 @@ end interpolator;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture behave of interpolator is
-   constant H0       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 1);
-   constant H1       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 2);
+   constant H0       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 1, 1);
+   constant H1       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 2, 1);
       
    signal filtered1  :  fir_sig;
    signal filtered2  :  fir_sig;
@@ -59,7 +59,8 @@ begin
    --Low pass the input signal using the multichannel approach
    low_pass : multichannel_fir_filter
       generic map(h0       => H0,
-                  h1       => H1)
+                  h1       => H1,
+                  INIT_SEL => b"10")
       port map(   clk      => clk_low,
                   clk_2x   => clk_high,
                   rst      => rst,
@@ -71,7 +72,7 @@ begin
    --Mux the poly-phase filter results into one signal  
    --NOTE: If this design were to ever support interpolation factor > 2, the mux would need to select the input signals in descending order         
    mux_sigs : muxer
-   generic map(INIT_SEL    => b"01")
+   generic map(INIT_SEL    => std_logic_vector(rotate_left(unsigned'(b"01"), h'length)))
    port map(clk            => clk_low,
             clk_2x         => clk_high,
             rst            => rst,

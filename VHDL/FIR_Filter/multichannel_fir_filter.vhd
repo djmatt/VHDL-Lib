@@ -16,7 +16,8 @@ package multichannel_fir_filter_pkg is
    --FIR filter component declaration
    component multichannel_fir_filter is
       generic( h0                   : coefficient_array;
-               h1                   : coefficient_array);
+               h1                   : coefficient_array;
+               INIT_SEL             : std_logic_vector(1 downto 0)   := b"01");
       port(    clk                  : in  std_logic;
                clk_2x               : in  std_logic;
                rst                  : in  std_logic;
@@ -42,7 +43,8 @@ library work;
 
 entity multichannel_fir_filter is
    generic( h0                   : coefficient_array;
-            h1                   : coefficient_array);
+            h1                   : coefficient_array;
+            INIT_SEL             : std_logic_vector(1 downto 0)   := b"01");
    port(    clk                  : in  std_logic;
             clk_2x               : in  std_logic;
             rst                  : in  std_logic;
@@ -65,6 +67,7 @@ begin
 
    --mux input signals into one signal
    mux_sigs : muxer
+      generic map(INIT_SEL => INIT_SEL)
       port map(clk      => clk,
                clk_2x   => clk_2x,
                rst      => rst,
@@ -78,7 +81,7 @@ begin
    
       --choose the coefficient
       mux_coefs : muxer
-         generic map(INIT_SEL => std_logic_vector( rotate_left(unsigned'("01"), tap) ) )
+         generic map(INIT_SEL => std_logic_vector(rotate_right(rotate_left(unsigned(INIT_SEL), tap-h0'low),1)))--rotate right accounts for coef reg delay in tap
          port map(   clk      => clk,
                      clk_2x   => clk_2x,
                      rst      => rst,
@@ -113,6 +116,7 @@ begin
    
    --demux running sum to outputs 
    demux_sigs : demuxer
+      generic map(INIT_SEL => std_logic_vector(rotate_left(unsigned(INIT_SEL), h0'length)))--account for past delay by rotating left
       port map(clk      => clk, 
                clk_2x   => clk_2x, 
                rst      => rst, 

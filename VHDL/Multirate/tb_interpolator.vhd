@@ -25,12 +25,12 @@ end tb_interpolator;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture sim of tb_interpolator is
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_decimated.csv";  
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_interpolated.csv";
+--   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_decimated.csv";  
+--   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_interpolated.csv";
 --   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_decimated.csv";  
 --   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_interpolated.csv";
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_interpolated.csv";
+   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
+   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_interpolated.csv";
   
    signal rst        : std_logic := '0';
    signal clk_10ns   : std_logic := '0';
@@ -58,7 +58,8 @@ begin
 
    --Instantiate unit under test
    uut : entity work.interpolator(behave)
-      generic map(h        => LOW_PASS)
+--      generic map(h        => LOW_PASS)
+      generic map(h        => NYQUIST_LOW_BANK)
       port map(   clk_high => clk_10ns,
                   clk_low  => clk_20ns,
                   rst      => rst,
@@ -76,7 +77,7 @@ begin
    main: process
    begin
       rst <= '1';
-      wait for 12ns;
+      wait for 36ns;
       rst <= '0';
       wait;
    end process;
