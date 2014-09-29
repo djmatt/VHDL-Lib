@@ -56,8 +56,8 @@ begin
 
    --Instantiate unit under test
    uut : entity work.decomposition(behave)
-      generic map(low_pass    => NYQUIST_LOW_BANK,
-                  high_pass   => NYQUIST_HIGH_BANK)
+      generic map(low_pass    => PR_ANALYSIS_LOW,
+                  high_pass   => PR_ANALYSIS_HIGH)
       port map(   clk_low     => clk_20ns,
                   clk_high    => clk_10ns,
                   rst         => rst,

@@ -80,6 +80,6 @@ begin
             sig2           => std_logic_vector(filtered2),
             fir_sig(sigs)  => combined);
    
-   sig_high <= combined(29 downto 14);
+   sig_high <= combined(30 downto 15);
 
 end behave;

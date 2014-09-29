@@ -25,7 +25,7 @@ end tb_filter_bank;
 --        ARCHITECTURE
 ----------------------------------------------------------------------------------------------------
 architecture sim of tb_filter_bank is
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_long.csv";
    constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_filter_bank.csv";  
   
    signal rst           : std_logic := '0';
@@ -66,15 +66,17 @@ begin
 
    --Instantiate unit under test
    uut : entity work.filter_bank(behave)
-      generic map(low_pass    => NYQUIST_LOW_BANK,
-                  high_pass   => NYQUIST_HIGH_BANK)
-      port map(   clk0        => clk_10ns,
-                  clk1        => clk_20ns,
-                  clk2        => clk_40ns,
-                  clk3        => clk_80ns,
-                  rst         => rst,
-                  x           => sig_in,
-                  y           => sig_out);
+      generic map(analysis_low   => PR_ANALYSIS_LOW,
+                  analysis_high  => PR_ANALYSIS_HIGH,
+                  synthesis_low  => PR_SYNTHESIS_LOW,
+                  synthesis_high => PR_SYNTHESIS_HIGH)
+      port map(   clk0           => clk_10ns,
+                  clk1           => clk_20ns,
+                  clk2           => clk_40ns,
+                  clk3           => clk_80ns,
+                  rst            => rst,
+                  x              => sig_in,
+                  y              => sig_out);
                                     
    --Instantiate a file writer
    writer1 : tb_write_csv

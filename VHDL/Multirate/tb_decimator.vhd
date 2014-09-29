@@ -59,7 +59,7 @@ begin
    --Instantiate unit under test
    uut : entity work.decimator(behave)
 --      generic map(h        => LOW_PASS)
-      generic map(h        => NYQUIST_LOW_BANK)
+      generic map(h        => PR_ANALYSIS_LOW)
       port map(   clk_high => clk_10ns,
                   clk_low  => clk_20ns,
                   rst      => rst,

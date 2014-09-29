@@ -56,7 +56,7 @@ begin
    --Decimate the signal by 2
    downsampling : decimator
 --      generic map(h        => LOW_PASS)
-      generic map(h        => NYQUIST_LOW_BANK)
+      generic map(h        => PR_ANALYSIS_LOW)
       port map(   clk_high => clk_high,
                   clk_low  => clk_low,
                   rst      => rst,
@@ -74,7 +74,7 @@ begin
    --Interpolate the filtered signal up by 2
    upsample : interpolator
 --      generic map(h        => LOW_PASS)
-      generic map(h        => NYQUIST_LOW_BANK)
+      generic map(h        => PR_SYNTHESIS_LOW)
       port map(   clk_high => clk_high,
                   clk_low  => clk_low,
                   rst      => rst,
