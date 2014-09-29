@@ -90,8 +90,8 @@ begin
    stage0_decomp : decomposition
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
-      port map(   clk_low     => clk0,
-                  clk_high    => clk1,
+      port map(   clk_low     => clk1,
+                  clk_high    => clk0,
                   rst         => rst,
                   x           => x,
                   y_low       => down_y00,
@@ -101,8 +101,8 @@ begin
    stage1_bank0_decomp : decomposition
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
-      port map(   clk_low     => clk1,
-                  clk_high    => clk2,
+      port map(   clk_low     => clk2,
+                  clk_high    => clk1,
                   rst         => rst,
                   x           => down_y00,
                   y_low       => down_y10,
@@ -111,111 +111,116 @@ begin
    stage1_bank1_decomp : decomposition
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
-      port map(   clk_low     => clk1,
-                  clk_high    => clk2,
+      port map(   clk_low     => clk2,
+                  clk_high    => clk1,
                   rst         => rst,
                   x           => down_y01,
                   y_low       => down_y12,
                   y_high      => down_y13);
                   
-   -------   Stage 2   Decomposition   ---------------------
-   stage2_bank0_decomp : decomposition
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x           => down_y10,
-                  y_low       => down_y20,
-                  y_high      => down_y21);
-
-   stage2_bank1_decomp : decomposition
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x           => down_y11,
-                  y_low       => down_y22,
-                  y_high      => down_y23);
-
-   stage2_bank2_decomp : decomposition
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x           => down_y12,
-                  y_low       => down_y24,
-                  y_high      => down_y25);
-
-   stage2_bank3_decomp : decomposition
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x           => down_y13,
-                  y_low       => down_y26,
-                  y_high      => down_y27);
-
-   -------   Filter Bank Region   --------------------------  
-   up_y20 <= down_y20;
-   up_y21 <= down_y21;
-   up_y22 <= down_y22;
-   up_y23 <= down_y23;
-   up_y24 <= down_y24;
-   up_y25 <= down_y25;
-   up_y26 <= down_y26;
-   up_y27 <= down_y27;
-
-   -------   Stage 2   Reconstruction   --------------------
-   stage2_bank0_recon : reconstruction
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x_low       => up_y20,
-                  x_high      => up_y21,
-                  y           => up_y10);
-
-   stage2_bank1_recon : reconstruction
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x_low       => up_y22,
-                  x_high      => up_y23,
-                  y           => up_y11);
-
-   stage2_bank2_recon : reconstruction
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x_low       => up_y24,
-                  x_high      => up_y25,
-                  y           => up_y12);
-                  
-   stage2_bank3_recon : reconstruction
-      generic map(low_pass    => low_pass,
-                  high_pass   => high_pass)
-      port map(   clk_low     => clk2,
-                  clk_high    => clk3,
-                  rst         => rst,
-                  x_low       => up_y26,
-                  x_high      => up_y27,
-                  y           => up_y13);
-
+--   -------   Stage 2   Decomposition   ---------------------
+--   stage2_bank0_decomp : decomposition
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x           => down_y10,
+--                  y_low       => down_y20,
+--                  y_high      => down_y21);
+--
+--   stage2_bank1_decomp : decomposition
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x           => down_y11,
+--                  y_low       => down_y22,
+--                  y_high      => down_y23);
+--
+--   stage2_bank2_decomp : decomposition
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x           => down_y12,
+--                  y_low       => down_y24,
+--                  y_high      => down_y25);
+--
+--   stage2_bank3_decomp : decomposition
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x           => down_y13,
+--                  y_low       => down_y26,
+--                  y_high      => down_y27);
+--
+--   -------   Filter Bank Region   --------------------------  
+--   up_y20 <= down_y20;
+--   up_y21 <= down_y21;
+--   up_y22 <= down_y22;
+--   up_y23 <= down_y23;
+--   up_y24 <= down_y24;
+--   up_y25 <= down_y25;
+--   up_y26 <= down_y26;
+--   up_y27 <= down_y27;
+--
+--   -------   Stage 2   Reconstruction   --------------------
+--   stage2_bank0_recon : reconstruction
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x_low       => up_y20,
+--                  x_high      => up_y21,
+--                  y           => up_y10);
+--
+--   stage2_bank1_recon : reconstruction
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x_low       => up_y22,
+--                  x_high      => up_y23,
+--                  y           => up_y11);
+--
+--   stage2_bank2_recon : reconstruction
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x_low       => up_y24,
+--                  x_high      => up_y25,
+--                  y           => up_y12);
+--                  
+--   stage2_bank3_recon : reconstruction
+--      generic map(low_pass    => low_pass,
+--                  high_pass   => high_pass)
+--      port map(   clk_low     => clk3,
+--                  clk_high    => clk2,
+--                  rst         => rst,
+--                  x_low       => up_y26,
+--                  x_high      => up_y27,
+--                  y           => up_y13);
+--
    -------   Stage 1   Reconstruction   --------------------
+   up_y10 <= down_y10;
+   up_y11 <= down_y11;
+   up_y12 <= down_y12;
+   up_y13 <= down_y13;
+   
    stage1_bank0_recon : reconstruction
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
-      port map(   clk_low     => clk1,
-                  clk_high    => clk2,
+      port map(   clk_low     => clk2,
+                  clk_high    => clk1,
                   rst         => rst,
                   x_low       => up_y10,
                   x_high      => up_y11,
@@ -225,18 +230,20 @@ begin
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
       port map(   clk_low     => clk2,
-                  clk_high    => clk3,
+                  clk_high    => clk1,
                   rst         => rst,
                   x_low       => up_y12,
                   x_high      => up_y13,
                   y           => up_y01);
                   
    -------   Stage 0   Reconstruction   --------------------
+--   up_y00 <= down_y00;
+--   up_y01 <= down_y01;
    stage0_bank0_recon : reconstruction
       generic map(low_pass    => low_pass,
                   high_pass   => high_pass)
       port map(   clk_low     => clk1,
-                  clk_high    => clk2,
+                  clk_high    => clk0,
                   rst         => rst,
                   x_low       => up_y00,
                   x_high      => up_y01,

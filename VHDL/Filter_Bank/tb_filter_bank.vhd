@@ -88,7 +88,7 @@ begin
    main: process
    begin
       rst <= '1';
-      wait for 26ns;
+      wait for 76ns;
       rst <= '0';
       wait;
    end process;
