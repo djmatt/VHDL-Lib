@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Multi-channel FIR Filter Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,14 +21,21 @@ library work;
 entity tb_multichannel_fir_filter is
 end tb_multichannel_fir_filter;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_multichannel_fir_filter is
-   constant INPUT_FILE1    : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
-   constant INPUT_FILE2    : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp2.csv";
-   constant OUTPUT_FILE1   : string := "X:\Education\Masters Thesis\matlab\fir_filters\multichannel_chirp_filtered.csv";  
-   constant OUTPUT_FILE2   : string := "X:\Education\Masters Thesis\matlab\fir_filters\multichannel_chirp2_filtered.csv";  
+   constant INPUT_FILE1    : string 
+      := "X:\Education\Masters Thesis\matlab\multichannel\chirp_s2f.csv";
+   constant TEST_FILTER1   : coefficient_array  := LOW_PASS_101;
+   constant OUTPUT_FILE1   : string 
+      := "X:\Education\Masters Thesis\matlab\multichannel\chirp_lowpass101.csv";  
+   
+   constant INPUT_FILE2    : string 
+      := "X:\Education\Masters Thesis\matlab\multichannel\chirp_f2s.csv";
+   constant TEST_FILTER2   : coefficient_array  := HIGH_PASS_101;
+   constant OUTPUT_FILE2   : string 
+      := "X:\Education\Masters Thesis\matlab\multichannel\chirp_highpass101.csv";  
   
    signal rst        : std_logic                                  := '0';
    signal clk        : std_logic                                  := '0';
@@ -66,8 +73,8 @@ begin
                   
    --Instantiate unit under test
    uut : entity work.multichannel_fir_filter(behave)
-      generic map(h0       => LOW_PASS,
-                  h1       => HIGH_PASS)
+      generic map(h0       => TEST_FILTER1,
+                  h1       => TEST_FILTER2)
       port map(   clk      => clk,
                   clk_2x   => clk_2x,
                   rst      => rst,

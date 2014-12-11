@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Multi-channel FIR Filter
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        PACKAGE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    
@@ -28,9 +28,9 @@ package multichannel_fir_filter_pkg is
    end component;
 end package;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -54,20 +54,26 @@ entity multichannel_fir_filter is
             y2                   : out fir_sig);
 end multichannel_fir_filter;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture behave of multichannel_fir_filter is
+   constant INPUT_MUXER_INIT_SEL    :  std_logic_vector
+      := INIT_SEL;
+   --account for past delay by rotating left  
+   constant OUTPUT_MUXER_INIT_SEL   :  std_logic_vector
+      := std_logic_vector(rotate_left(unsigned(INIT_SEL), h0'length));
+
    signal xs            : std_logic_vector(NUM_SIG_BITS-1 downto 0)  := (others => '0');
-   signal x_chain       : sig_array(h0'range)                        := (others => (others => '0'));
-   signal running_sum   : fir_sig_array(h0'range)                    := (others => (others => '0'));
-   signal y1_slv        : std_logic_vector(y1'range)                 := (others => '0');
-   signal y2_slv        : std_logic_vector(y2'range)                 := (others => '0');
+   signal x_chain       : sig_array(h0'range)             := (others => (others => '0'));
+   signal running_sum   : fir_sig_array(h0'range)         := (others => (others => '0'));
+   signal y1_slv        : std_logic_vector(y1'range)      := (others => '0');
+   signal y2_slv        : std_logic_vector(y2'range)      := (others => '0');
 begin
 
    --mux input signals into one signal
    mux_sigs : muxer
-      generic map(INIT_SEL => INIT_SEL)
+      generic map(INIT_SEL => INPUT_MUXER_INIT_SEL)
       port map(clk      => clk,
                clk_2x   => clk_2x,
                rst      => rst,
@@ -76,12 +82,17 @@ begin
                sigs     => xs);
    
    filter_loop : for tap in h0'low to h0'high generate
+      --Setup the initial selection for the coefficient muxers. The selection is dependent on the 
+      --current tap.  The rotate right accounts for coef reg delay inside the tap.
+      constant COEF_MUXER_INIT_SEL  :  std_logic_vector  
+         := std_logic_vector(rotate_right(rotate_left(unsigned(INIT_SEL), tap-h0'low),1));
+
       signal coef : std_logic_vector(coefficient'range) := (others => '0');
    begin
    
       --choose the coefficient
       mux_coefs : muxer
-         generic map(INIT_SEL => std_logic_vector(rotate_right(rotate_left(unsigned(INIT_SEL), tap-h0'low),1)))--rotate right accounts for coef reg delay in tap
+         generic map(INIT_SEL => COEF_MUXER_INIT_SEL)
          port map(   clk      => clk,
                      clk_2x   => clk_2x,
                      rst      => rst,
@@ -116,7 +127,7 @@ begin
    
    --demux running sum to outputs 
    demux_sigs : demuxer
-      generic map(INIT_SEL => std_logic_vector(rotate_left(unsigned(INIT_SEL), h0'length)))--account for past delay by rotating left
+      generic map(INIT_SEL => OUTPUT_MUXER_INIT_SEL)
       port map(clk      => clk, 
                clk_2x   => clk_2x, 
                rst      => rst, 

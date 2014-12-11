@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Decimator Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,13 +21,16 @@ library work;
 entity tb_decomposition is
 end tb_decomposition;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_decomposition is
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
-   constant OUTPUT_FILE1: string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_low.csv";  
-   constant OUTPUT_FILE2: string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_high.csv";  
+   constant INPUT_FILE  : string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant OUTPUT_FILE1: string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_low.csv";  
+   constant OUTPUT_FILE2: string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_high.csv";  
   
    signal rst           : std_logic := '0';
    signal clk_10ns      : std_logic := '0';

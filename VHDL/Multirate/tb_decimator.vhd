@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Decimator Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,16 +21,22 @@ library work;
 entity tb_fir_filter is
 end tb_fir_filter;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_fir_filter is
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig.csv";
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_decimated.csv";  
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_decimated.csv";  
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
+--   constant INPUT_FILE  : string 
+--      := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig.csv";
+--   constant OUTPUT_FILE : string 
+--      := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_decimated.csv";  
+--   constant INPUT_FILE  : string 
+--      := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
+--   constant OUTPUT_FILE : string 
+--      := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_decimated.csv";  
+   constant INPUT_FILE  : string 
+        := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
+   constant OUTPUT_FILE : string 
+        := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decimated.csv";  
   
    signal rst        : std_logic := '0';
    signal clk_10ns   : std_logic := '0';

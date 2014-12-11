@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        3-stage Filter Bank
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        PACKAGE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    
@@ -29,9 +29,9 @@ package filter_bank_pkg is
    end component;
 end package;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
 
@@ -39,6 +39,9 @@ library work;
    use work.dsp_pkg.all;
    use work.decomposition_pkg.all;
    use work.reconstruction_pkg.all;
+   --synthesis translate_off
+   use work.tb_write_csv_pkg.all;
+   --synthesis translate_on
 
 entity filter_bank is
       generic( analysis_low   : coefficient_array;
@@ -54,10 +57,19 @@ entity filter_bank is
                y              : out sig);
 end filter_bank;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture behave of filter_bank is
+   constant BANK0_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank0.csv";
+   constant BANK1_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank1.csv";
+   constant BANK2_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank2.csv";
+   constant BANK3_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank3.csv";
+   constant BANK4_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank4.csv";
+   constant BANK5_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank5.csv";
+   constant BANK6_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank6.csv";
+   constant BANK7_FILE : string := "X:\Education\Masters Thesis\matlab\filter_bank\bank7.csv";
+
    -- Numerics NM : N -> stage, M -> bank
    signal down_y00   : sig := (others => '0');
    signal down_y01   : sig := (others => '0');
@@ -172,6 +184,49 @@ begin
    up_y25 <= down_y25;
    up_y26 <= down_y26;
    up_y27 <= down_y27;
+   
+   --synthesis translate_off
+   --Output to files for review
+   writer20 : tb_write_csv
+      generic map(FILENAME => BANK0_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y20));
+
+   writer21 : tb_write_csv
+      generic map(FILENAME => BANK1_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y21));
+
+   writer22 : tb_write_csv
+      generic map(FILENAME => BANK2_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y22));
+
+   writer23 : tb_write_csv
+      generic map(FILENAME => BANK3_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y23));
+
+   writer24 : tb_write_csv
+      generic map(FILENAME => BANK4_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y24));
+
+   writer25 : tb_write_csv
+      generic map(FILENAME => BANK5_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y25));
+
+   writer26 : tb_write_csv
+      generic map(FILENAME => BANK6_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y26));
+
+   writer27 : tb_write_csv
+      generic map(FILENAME => BANK7_FILE)
+      port map(   clk      => clk3,
+                  data     => std_logic_vector(down_y27));
+   --synthesis translate_on
 
    -------   Stage 2   Reconstruction   --------------------
    stage2_bank0_recon : reconstruction

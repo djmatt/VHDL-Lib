@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Multirate Fir Filter Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,16 +21,15 @@ library work;
 entity tb_multirate_fir_filter is
 end tb_multirate_fir_filter;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_multirate_fir_filter is
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig.csv";  
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\singleSig_multirated.csv";
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs2.csv";  
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs2_multirated.csv";
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_half.csv";  
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_half_multirated.csv";
+
+   constant INPUT_FILE  : string 
+      := "X:\Education\Masters Thesis\matlab\multirate\mixedsigs.csv";
+   constant OUTPUT_FILE : string 
+      := "X:\Education\Masters Thesis\matlab\multirate\interpolated_filtered_sig.csv";
   
    signal rst        : std_logic := '0';
    signal clk_10ns   : std_logic := '0';
@@ -55,9 +54,10 @@ begin
       generic map(FILENAME    => INPUT_FILE)
       port map(   clk         => clk_10ns,
                   sig(data)   => sig_in);
-                  
+
+   --Unit under test                  
    uut : multirate_fir_filter
-   generic map(h        => LOW_PASS)
+   generic map(h        => LOW_PASS_41)
    port map(   clk_low  => clk_20ns,
                clk_high => clk_10ns,
                rst      => rst,
@@ -75,7 +75,7 @@ begin
    main: process
    begin
       rst <= '1';
-      wait for 26ns;
+      wait for 36ns;
       rst <= '0';
       wait;
    end process;

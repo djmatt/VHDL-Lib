@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Interpolator
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        PACKAGE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    
@@ -23,9 +23,9 @@ package interpolator_pkg is
    end component;
 end package;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -44,12 +44,14 @@ entity interpolator is
             sig_high : out sig);
 end interpolator;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture behave of interpolator is
-   constant H0       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 1, 1);
-   constant H1       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 2, 1);
+   constant H0       : coefficient_array(1 to (h'length+1)/2) 
+                        := slice_coefficient_array(h, 2, 1, 1);
+   constant H1       : coefficient_array(1 to (h'length+1)/2) 
+                        := slice_coefficient_array(h, 2, 2, 1);
       
    signal filtered1  :  fir_sig;
    signal filtered2  :  fir_sig;
@@ -70,7 +72,8 @@ begin
                   y2       => filtered2);
     
    --Mux the poly-phase filter results into one signal  
-   --NOTE: If this design were to ever support interpolation factor > 2, the mux would need to select the input signals in descending order         
+   --NOTE: If this design were to ever support interpolation factor > 2, the mux would need to 
+   --select the input signals in descending order         
    mux_sigs : muxer
    generic map(INIT_SEL    => std_logic_vector(rotate_left(unsigned'(b"01"), h'length)))
    port map(clk            => clk_low,

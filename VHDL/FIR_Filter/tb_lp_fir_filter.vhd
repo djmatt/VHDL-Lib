@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        FIR Filter Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,15 +21,25 @@ library work;
 entity tb_lp_fir_filter is
 end tb_lp_fir_filter;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_lp_fir_filter is
---   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs.csv";
---   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\mixedSigs_lp_filtered.csv";  
-   constant INPUT_FILE  : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp.csv";
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_lp_filtered.csv";  
-  
+   constant INPUT_FILE  : string 
+      := "X:\Education\Masters Thesis\matlab\lp_fir_filter\chirp.csv";
+   
+--   constant TEST_FILTER : coefficient_array  := HIGH_PASS_21;
+--   constant OUTPUT_FILE : string 
+--      := "X:\Education\Masters Thesis\matlab\lp_fir_filter\chirp_highpass21.csv";  
+   
+--   constant TEST_FILTER : coefficient_array  := LOW_PASS_41;
+--   constant OUTPUT_FILE : string 
+--      := "X:\Education\Masters Thesis\matlab\lp_fir_filter\chirp_lowpass41.csv";  
+   
+   constant TEST_FILTER : coefficient_array  := HIGH_PASS_101;
+   constant OUTPUT_FILE : string 
+      := "X:\Education\Masters Thesis\matlab\lp_fir_filter\chirp_highpass101.csv";  
+     
    signal rst        : std_logic := '0';
    signal clk        : std_logic := '0';
    signal sig        : std_logic_vector(NUM_SIG_BITS-1 downto 0) := (others => '0');
@@ -52,7 +62,7 @@ begin
 
    --Instantiate unit under test
    uut : entity work.lp_fir_filter(behave)
-      generic map(h    => LOW_PASS)
+      generic map(h    => TEST_FILTER)
       port map(   clk  => clk,
                   rst  => rst,
                   x    => signed(sig),

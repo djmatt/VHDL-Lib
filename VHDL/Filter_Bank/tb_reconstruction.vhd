@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Reconstruction Testbench
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -21,13 +21,16 @@ library work;
 entity tb_reconstruction is
 end tb_reconstruction;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture sim of tb_reconstruction is
-   constant INPUT_FILE1 : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_low.csv";  
-   constant INPUT_FILE2 : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_high.csv";
-   constant OUTPUT_FILE : string := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_reconstructed.csv";
+   constant INPUT_FILE1 : string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_low.csv";  
+   constant INPUT_FILE2 : string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_decomp_high.csv";
+   constant OUTPUT_FILE : string 
+      := "X:\Education\Masters Thesis\matlab\fir_filters\chirp_reconstructed.csv";
   
    signal rst           : std_logic := '0';
    signal clk_10ns      : std_logic := '0';

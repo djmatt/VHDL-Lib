@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        Decimator
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        PACKAGE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    
@@ -23,9 +23,9 @@ package decimator_pkg is
    end component;
 end package;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -44,13 +44,15 @@ entity decimator is
             sig_low  : out sig);
 end decimator;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture behave of decimator is
    
-   constant H0       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 1, 0);
-   constant H1       : coefficient_array(1 to (h'length+1)/2) := slice_coefficient_array(h, 2, 2, 0);
+   constant H0       : coefficient_array(1 to (h'length+1)/2) 
+                        := slice_coefficient_array(h, 2, 1, 0);
+   constant H1       : coefficient_array(1 to (h'length+1)/2) 
+                        := slice_coefficient_array(h, 2, 2, 0);
       
    signal sig1       :  sig      := (others => '0');
    signal sig2       :  sig      := (others => '0');
@@ -60,7 +62,8 @@ architecture behave of decimator is
 begin
    
    --Demux the signal   
-   --NOTE: If this design were to ever support decimation factor > 2, the demux would need to send out the signal to the parallel lines in descending order.
+   --NOTE: If this design were to ever support decimation factor > 2, the demux would need to send
+   --out the signal to the parallel lines in descending order.
    demux_sig : demuxer
    generic map(INIT_SEL    => b"01")--start demux on the lowest channel, demux should rotate right
    port map(   clk         => clk_low, 
@@ -74,7 +77,7 @@ begin
    anti_alias : multichannel_fir_filter
    generic map(h0       => H0,
                h1       => H1,
-               INIT_SEL => b"10")--Shift the initial channel to the left by 1, to account for delay through demux
+               INIT_SEL => b"10")
    port map(   clk      => clk_low,
                clk_2x   => clk_high,
                rst      => rst,

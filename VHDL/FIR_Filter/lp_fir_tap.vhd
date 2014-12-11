@@ -1,11 +1,11 @@
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        FIR Tap
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- Matthew Dallmeyer - d01matt@gmail.com
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        PACKAGE
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
 
@@ -28,9 +28,9 @@ package lp_fir_tap_pkg is
    
 end package;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ENTITY
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
@@ -39,8 +39,8 @@ library work;
    use work.dsp_pkg.all;
 
 --This entity represents a single tap in a even-symmetry linear phase FIR filter.  The taps are 
---designed to implement a cascade adder allowing for chaining an indefinite (tho definitely finite) 
---number of taps.
+--designed to implement a cascade adder allowing for chaining an indefinite (tho definitely 
+--finite) number of taps.
 entity lp_fir_tap is
    port(    clk                  : in  std_logic;
             rst                  : in  std_logic;
@@ -52,9 +52,9 @@ entity lp_fir_tap is
             sum_out              : out fir_sig);
 end lp_fir_tap;
 
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 --        ARCHITECTURE (behavioral)
-----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 architecture behave of lp_fir_tap is
    signal sig_delay        : sig_array(1 to 2)     := (others => (others => '0'));
    signal return_sig_delay : sig                   := (others => '0');
@@ -85,7 +85,8 @@ begin
          if(rst = '1') then   
             pre_add_sum <= (others => '0');
          else
-            pre_add_sum <= resize(sig_delay(2), NUM_SUMMED_SIG_BITS) + resize(return_sig_delay, NUM_SUMMED_SIG_BITS);
+            pre_add_sum <= resize(sig_delay(2), NUM_SUMMED_SIG_BITS) 
+                           + resize(return_sig_delay, NUM_SUMMED_SIG_BITS);
          end if;
       end if;
    end process;
