@@ -24,10 +24,12 @@ end tb_lfsr;
 architecture sim of tb_lfsr is
    signal rst        : std_logic := '0';
    signal clk        : std_logic := '0';
-   signal feedback   : std_logic_vector(15 downto 0);
+   signal feedback   : std_logic_vector(0 downto 0) := (others => '0');
 
-   signal polynomial : std_logic_vector(15 downto 0) := "0000000000000000";
-   signal seed       : std_logic_vector(15 downto 0) := "0000000000000000";
+   signal polynomial : std_logic_vector(15 downto 0) := (others => '0');
+   signal seed       : std_logic_vector(15 downto 0) := (others => '0');
+   signal pr_num     : std_logic_vector(15 downto 0) := (others => '0');
+   
 begin
 
    --Instantiate clock generator
@@ -43,20 +45,21 @@ begin
                   poly_mask   => polynomial,
                   seed        => seed,
                   feedin      => feedback,
-                  feedout     => feedback);
+                  feedout     => feedback,
+                  history     => pr_num);
                   
    writer : tb_write_csv
       generic map(FILENAME => "prng.csv")
       port map(   clk      => clk,
-                  data     => feedback);
+                  data     => pr_num);
 
    --Main Process
    main: process
    begin
-      polynomial <= "1000000000010110"; --x^16 + x^5 + x^3 + x^2 + 1
-      seed       <= "1111111111111111";
+      polynomial <= (15 => '1', 14 => '1', 12 => '1', 3 =>'1', others => '0'); 
+      seed       <= (others => '1');  
       rst <= '1';
-      wait for 10ns;
+      wait for 11ns;
       rst <= '0';
       wait;
    end process;

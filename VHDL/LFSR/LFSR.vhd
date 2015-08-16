@@ -16,7 +16,8 @@ package lfsr_pkg is
             poly_mask   : in  std_logic_vector;
             seed        : in  std_logic_vector;
             feedin      : in  std_logic_vector;
-            feedout     : out std_logic_vector);
+            feedout     : out std_logic_vector;
+            history     : out std_logic_vector);
    end component;
 
    function xor_Reduce(bits: std_logic_vector) return std_logic;
@@ -63,10 +64,11 @@ library work;
 --expected to be performed at a higher level, even when simple feedback is all that is required
 --(e.g. feedin<=feedout;)
 entity lfsr is
-   port( --Process clock, every rising edge the LFSR updates the feedback with a new value
+   port( --Process clock, on every rising edge the LFSR updates the feedback with a new value and 
+         --shifts previous values into the history.
          clk         : in  std_logic;
          --Asynchronous reset. While high: resets the LFSR to the seed value and sets the poly_mask
-         -- used for the feedback polynomial
+         --used for the feedback polynomial
          rst         : in  std_logic;
          --Place '1's in the bits where the polynomial calls for taps.  Read up on LFSR's before
          --selecting a polynomial, not all choices will yield "good" random numbers.
@@ -79,21 +81,26 @@ entity lfsr is
          feedin      : in  std_logic_vector;
          --Outbound path of the feedback.  This value is the result of the polynomial.  Feedback
          --this value to this module using feedin port.  Some designs call for xor'ing this value
-         --with another value before returning to feedin.
-         feedout     : out std_logic_vector);
+         --with another value before returning to feedin.  Wider feedback signal generate multiple 
+         --feedback bits per clock cycle, but can be difficult for timing.
+         feedout     : out std_logic_vector;
+         --This output contains the history of the feedback which is also used to calculate the 
+         --subsequent feedback.  The history has to be seeded, hence the seed input.  It can also
+         --be used to source pseudorandom values.
+         history     : out std_logic_vector);
 end lfsr;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE (structural)
 ----------------------------------------------------------------------------------------------------
 architecture structural of lfsr is
-   signal poly_mask_reg : std_logic_vector(poly_mask'range);
+   signal poly_mask_reg : std_logic_vector(poly_mask'range) := (others => '0');
    --All of these internal signals need to be defined in the same 0-to-'length range-order to make
    --optimal use of the 'range attribute
-   signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1));
+   signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1)) := (others => '0');
       alias data_in     : std_logic_vector(0 to (feedin'length-1)) is shift_reg(0 to (feedin'length-1));
       alias polynomial  : std_logic_vector(0 to (poly_mask'length-1)) is shift_reg(feedin'length to (feedin'length + poly_mask'length-1));
-   signal result        : std_logic_vector(0 to (feedout'length-1));
+   signal result        : std_logic_vector(0 to (feedout'length-1)) := (others => '0');
 begin
 
    --load the left-most bits of shift_reg with the feedin
@@ -127,7 +134,7 @@ begin
    calc_feedback: for outbit in result'reverse_range generate
       signal polynomial_window   : std_logic_vector(polynomial'range);
       signal final_polynomial    : std_logic_vector(polynomial'range);
-      signal iResult             : std_logic;
+      signal iResult             : std_logic := '0';
    begin
       --Lines up the polynomial with the current outbit
       polynomial_window <= shift_reg(outbit + polynomial'low + 1 to outbit + polynomial'high + 1);
@@ -147,15 +154,18 @@ begin
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
    feedout <= result;
+   
+   --Output the polynomial portion of the shift register.
+   history <= polynomial;
 end structural;
 
 ----------------------------------------------------------------------------------------------------
 --        ARCHITECTURE (behavioral)
 ----------------------------------------------------------------------------------------------------
 architecture behave of lfsr is
-   signal poly_mask_reg : std_logic_vector(poly_mask'range);
+   signal poly_mask_reg : std_logic_vector(poly_mask'range) := (others => '0');
    --All of these internal signals need to be defined in the same 0-to-'length range order to make optimal use of the 'range attribute
-   signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1));
+   signal shift_reg     : std_logic_vector(0 to (feedin'length + poly_mask'length-1)) := (others => '0');
       alias data_in     : std_logic_vector(0 to (feedin'length-1)) is shift_reg(0 to (feedin'length-1));
       alias polynomial  : std_logic_vector(0 to (poly_mask'length-1)) is shift_reg(feedin'length to (feedin'length + poly_mask'length-1));
    signal result        : std_logic_vector(0 to (feedout'length-1));
@@ -207,5 +217,8 @@ begin
 
    --Before feeding the result back to the shift register, pass it to the higher level first.
    feedout(feedout'range) <= result(result'range);
+   
+   --Output the polynomial portion of the shift register.
+   history <= polynomial;
 
 end behave;
