@@ -8,15 +8,15 @@
 --------------------------------------------------------------------------------------------------
 library ieee;
    use ieee.std_logic_1164.all;
-   
+
 package count_gen_pkg is
    component count_gen is
-      generic( VECTOR_LEN  : positive  := 32;
-               INIT_VAL    : integer   := 0);
+      generic( INIT_VAL    : integer   := 0;
+               STEP_VAL    : integer   := 1);
       port(    clk         : in  std_logic;
                rst         : in  std_logic;
                en          : in  std_logic;
-               count       : out std_logic_vector(VECTOR_LEN-1 downto 0));
+               count       : out integer);
    end component;
 end package;
 
@@ -28,12 +28,12 @@ library ieee;
    use ieee.numeric_std.all;
 
 entity count_gen is
-   generic( VECTOR_LEN  : positive  := 32;
-            INIT_VAL    : integer   := 0);
+   generic( INIT_VAL    : integer   := 0;
+            STEP_VAL    : integer   := 1);
    port(    clk         : in  std_logic;
             rst         : in  std_logic;
             en          : in  std_logic;
-            count       : out std_logic_vector(VECTOR_LEN-1 downto 0));
+            count       : out integer);
 end count_gen;
 
 --------------------------------------------------------------------------------------------------
@@ -52,11 +52,11 @@ begin
          if(rst = '1') then
             count_reg   <= INIT_VAL;
          elsif(en = '1') then
-            count_reg   <= count_reg + 1;
+            count_reg   <= count_reg + STEP_VAL;
          end if;
       end if;
    end process;
-   
-   count <= std_logic_vector(to_unsigned(count_reg, VECTOR_LEN));
-   
+
+   count <= count_reg;
+
 end rtl;

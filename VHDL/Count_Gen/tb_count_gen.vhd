@@ -9,7 +9,7 @@
 library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
-   
+
 library work;
    use work.tb_clockgen_pkg.all;
    use work.count_gen_pkg.all;
@@ -25,24 +25,24 @@ architecture rtl of tb_count_gen is
    signal clk     : std_logic;
    signal rst     : std_logic;
    signal en      : std_logic;
-   signal count   : std_logic_vector(31 downto 0);
+   signal count   : integer;
 
 begin
    --Instantiate clock generator
    clk_gen : tb_clockgen
    generic map(PERIOD      => 10ns,
                DUTY_CYCLE  => 0.50)
-   port map(   clk         => clk);   
-   
+   port map(   clk         => clk);
+
    --Unit under test
    uut : count_gen
-   generic map(VECTOR_LEN  => 32,
-               INIT_VAL    => 17)
+   generic map(INIT_VAL    => 17,
+               STEP_VAL    => 2)
    port map(   clk         => clk,
                rst         => rst,
                en          => en,
                count       => count);
-                                       
+
    --main process
    main : process
    begin
